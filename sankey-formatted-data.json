@@ -1,0 +1,75 @@
+﻿{
+  "nodes": [
+    {
+      "node": 0,
+      "name": "IVIS"
+    },
+    {
+      "node": 1,
+      "name": "Stats"
+    },
+    {
+      "node": 2,
+      "name": "Math"
+    },
+    {
+      "node": 3,
+      "name": "Aldor"
+    },
+    {
+      "node": 4,
+      "name": "Aragorn"
+    },
+    {
+      "node": 5,
+      "name": "Arwen"
+    }
+  ],
+  "links": [
+    {
+      "source": 3,
+      "target": 0,
+      "value": 7
+    },
+    {
+      "source": 3,
+      "target": 1,
+      "value": 3
+    },
+    {
+      "source": 3,
+      "target": 2,
+      "value": 3
+    },
+    {
+      "source": 4,
+      "target": 0,
+      "value": 5
+    },
+    {
+      "source": 4,
+      "target": 1,
+      "value": 4
+    },
+    {
+      "source": 4,
+      "target": 2,
+      "value": 3
+    },
+    {
+      "source": 5,
+      "target": 0,
+      "value": 3
+    },
+    {
+      "source": 5,
+      "target": 1,
+      "value": 3
+    },
+    {
+      "source": 5,
+      "target": 2,
+      "value": 3
+    }
+  ]
+}
