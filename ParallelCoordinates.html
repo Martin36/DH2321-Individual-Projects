@@ -1,5 +1,12 @@
 ﻿<!DOCTYPE html>
 <meta charset="utf-8">
+<head>
+    <!--http://ajtroxell.github.io/Division-Grid/-->
+    <link rel="stylesheet" href="CSS/division.min.css">
+    <link rel="stylesheet" href="CSS/reset.min.css">
+
+    <link rel="stylesheet" href="CSS/myStyleSheet.css">
+</head>
 <style>
     svg {
         font: 10px sans-serif;
@@ -33,12 +40,22 @@
         text-shadow: 0 1px 0 #fff, 1px 0 0 #fff, 0 -1px 0 #fff, -1px 0 0 #fff;
         cursor: move;
     }
+
 </style>
 <body>
     <script src="//d3js.org/d3.v3.min.js"></script>
+    <!--http://ajtroxell.github.io/Division-Grid/-->
+    <script type="text/javascript" src="JavaScripts/respond.min.js"></script>
     <script src="JavaScripts/ParallelScript.js"></script>
 
-    <div id="person-list">
-        
+    <div class="row">
+        <div class="one-third">
+            <div id="person-list"></div>
+        </div>
+        <div class="two-thirds">
+            <!--Here will be the code for the bar chart-->
+          <div id="bar-chart"></div>
+        </div>
     </div>
+    
 </body>
