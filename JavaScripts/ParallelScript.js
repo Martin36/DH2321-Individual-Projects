@@ -106,7 +106,7 @@ var group_data = [];
 for (var i = 0; i < nrOfCategories; i++) {
   group_data[i] = 0;
 }
-
+var categories;
 
 function position(d) {
   var v = dragging[d];
@@ -162,7 +162,7 @@ function data_table(sample) {
       .data(sample)
     .enter().append("div")
 		.on("click", function (d) {
-		  //Write function for selecting the person pressed and show a diagram of that persons skills
+		  //Function for selecting the person pressed and show a diagram of that persons skills
 		  create_barchart(d);
 		});
 
@@ -177,7 +177,7 @@ function data_table(sample) {
 }
 //https://leanpub.com/D3-Tips-and-Tricks
 function create_barchart(data) {
-
+  console.log(data);
   var margin = { top: 20, right: 20, bottom: 70, left: 40 },
   width = 600 - margin.left - margin.right,
   height = 300 - margin.top - margin.bottom;
@@ -189,7 +189,7 @@ function create_barchart(data) {
   var name = data.name;   
 
   //List of the different skills
-  var categories = Object.keys(data).filter(function (d) {
+  categories = Object.keys(data).filter(function (d) {
     return !(d == "name")   //Filter out the name parameter from the x-axis
   });
 
@@ -197,22 +197,7 @@ function create_barchart(data) {
   var new_values = Object.values(data);
   new_values = new_values.splice(1);
 
-
-  //This array contains the category and value pair such as ["IVIS", 4]
-  var rows = [];    
-  for (var i = 0; i < new_values.length; i++) {
-    rows[i] = [categories[i], new_values[i]];
-  }
-
-  var names = ["name", "value"];
-
-  //Create a new array with object elements such as {category : IVIS, value : 4} for example
-  var new_data = rows.map(function (row) {
-    return row.reduce(function (result, field, index) {
-      result[names[index]] = field;
-      return result;
-    }, {});
-  });
+  var new_data = create_data_array(categories, new_values);
 
   var svg;
 
@@ -238,12 +223,14 @@ function create_barchart(data) {
         group_data = group_data.map(function (num, ind) {
           return (num + +new_data[ind].value) / groupMembers;
         });
+        (groupchart_exists()) ? update_groupchart(group_data) : create_groupchart(group_data, categories);
       });
   }
   
 }
 
 function initialize_barchart(data, categories, name) {
+
   var margin = { top: 20, right: 20, bottom: 70, left: 40 },
 			width = 600 - margin.left - margin.right,
 			height = 300 - margin.top - margin.bottom;
@@ -314,13 +301,137 @@ function initialize_barchart(data, categories, name) {
       group_data = group_data.map(function (num, ind) {
         return (num + +data[ind].value) / groupMembers;
       });
+      (groupchart_exists()) ? update_groupchart() : create_groupchart(create_data_array(categories, group_data), categories);
     });
 
 
   return svg;
 }
 
-function update_group(data) {
-  console.log(data);
+function create_groupchart(data, categories){
 
+  var margin = { top: 20, right: 20, bottom: 70, left: 40 },
+  width = 800 - margin.left - margin.right,
+  height = 450 - margin.top - margin.bottom;
+
+  var y = d3.scale.linear().range([height, 0]);
+  y.domain([0, 10]);
+
+  var new_data = create_data_array(categories, data);
+
+  //Initialize diagram if it does not already exist
+  if (!$("#group-diagram").length) {
+    initialize_groupchart(data, categories, name);
+  }
+  else {
+    //Here we just want to change the data in the diagram
+    //First the height of the bars
+    d3.select("#group-diagram").selectAll('rect')
+       .data(new_data)
+       .attr("y", function (d) { return y(d.value); })
+     	 .attr("height", function (d) { return height - y(d.value); });
+  }
+
+}
+
+function initialize_groupchart(data, categories, name) {
+  console.log(data);
+  var margin = { top: 20, right: 20, bottom: 70, left: 40 },
+  width = 800 - margin.left - margin.right,
+  height = 450 - margin.top - margin.bottom;
+
+  var x = d3.scale.ordinal().rangeRoundBands([0, width], .05);
+  var y = d3.scale.linear().range([height, 0]);
+
+  var xAxis = d3.svg.axis()
+    .scale(x)
+    .orient("bottom")
+    .ticks(9);
+
+  var yAxis = d3.svg.axis()
+		.scale(y)
+		.orient("left")
+		.ticks(10);
+
+  //Create the domains for the x and y axis
+  x.domain(categories);    //Object.keys(data) returns the names of the variables of the object "data"
+  y.domain([0, 10]);
+
+  var svg = d3.select("#group-chart").append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+  .append("g")
+    .attr("id", "group-diagram")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+  svg.append("g")
+    .attr("class", "x axis")
+    .attr("transform", "translate(0," + height + ")")
+    .call(xAxis)
+  .selectAll("text")
+    .style("text-anchor", "end")
+    .attr("dx", "-.8em")
+    .attr("dy", "-.55em")
+    .attr("transform", "rotate(-90)");
+
+  svg.append("g")
+    .attr("class", "y axis")
+    .call(yAxis)
+  .append("text")
+    .attr("id", "barchart-name")
+    .attr("transform", "rotate(0)")
+    .attr("y", 6)
+    .attr("dy", ".71em")
+    .attr("dx", ".3cm")
+    .style("text-anchor", "front")
+    .text("Name");
+
+  svg.selectAll("bar")
+			.data(data)
+		.enter().append("rect")
+			.style("fill", "steelblue")
+			.attr("x", function (d) { return x(d.name); })
+			.attr("width", x.rangeBand())
+			.attr("y", function (d) { return y(d.value); })
+			.attr("height", function (d) { return height - y(d.value); });
+
+}
+
+function update_groupchart() {
+  var margin = { top: 20, right: 20, bottom: 70, left: 40 },
+  height = 450 - margin.top - margin.bottom;
+  var y = d3.scale.linear().range([height, 0]);
+  y.domain([0, 10]);
+
+  console.log(group_data);
+
+  d3.select("#group-diagram").selectAll('rect')
+   .data(group_data)
+   .attr("y", function (d) { return y(d); })
+   .attr("height", function (d) { return height - y(d); });
+
+}
+
+function groupchart_exists() {
+  return $("#group-diagram").length;
+}
+//Merges the array of categories with the array of values to create a new array with objects containing both a category and value
+function create_data_array(categories, values) {
+  //This array contains the category and value pair such as ["IVIS", 4]
+  var rows = [];
+  for (var i = 0; i < values.length; i++) {
+    rows[i] = [categories[i], values[i]];
+  }
+
+  var names = ["name", "value"];
+
+  //Create a new array with object elements such as {name : IVIS, value : 4} for example
+  var new_data = rows.map(function (row) {
+    return row.reduce(function (result, field, index) {
+      result[names[index]] = field;
+      return result;
+    }, {});
+  });
+
+  return new_data;
 }
