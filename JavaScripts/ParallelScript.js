@@ -200,11 +200,9 @@ function create_barchart(data) {
 
   var new_data = create_data_array(categories, new_values);
 
-  var svg;
-
   //Initialize diagram if it does not already exist
   if (!$("#diagram").length) {
-    svg = initialize_barchart(new_data, categories, name);
+    initialize_barchart(new_data, categories, name);
   }
   else {
     //Here we just want to change the data in the diagram
