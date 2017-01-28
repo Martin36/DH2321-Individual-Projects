@@ -20,10 +20,10 @@ var svg = d3.select("body").append("svg")
   .append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-d3.csv("Data/Proj1-data.csv", function (error, cars) {
+d3.csv("Data/Proj1-data.csv", function (error, data) {
 
   // Extract the list of dimensions and create a scale for each.
-  x.domain(dimensions = d3.keys(cars[0]).filter(function (d) {
+  x.domain(dimensions = d3.keys(data[0]).filter(function (d) {
     return d != "name" && (y[d] = d3.scale.linear()
 			.domain(/*d3.extent(cars, function (p) {return +p[d];})*/ yAxis)
 			.range([height, 0]));
@@ -33,7 +33,7 @@ d3.csv("Data/Proj1-data.csv", function (error, cars) {
   background = svg.append("g")
       .attr("class", "background")
     .selectAll("path")
-      .data(cars)
+      .data(data)
     .enter().append("path")
       .attr("d", path);
 
@@ -41,7 +41,7 @@ d3.csv("Data/Proj1-data.csv", function (error, cars) {
   foreground = svg.append("g")
       .attr("class", "foreground")
     .selectAll("path")
-      .data(cars)
+      .data(data)
     .enter().append("path")
       .attr("d", path);
 
@@ -165,7 +165,69 @@ function data_table(sample) {
 }
 //https://leanpub.com/D3-Tips-and-Tricks
 function create_barchart(data) {
+  var margin = { top: 20, right: 20, bottom: 70, left: 40 },
+  width = 600 - margin.left - margin.right,
+  height = 300 - margin.top - margin.bottom;
 
+  var y = d3.scale.linear().range([height, 0]);
+  y.domain([0, 10]);
+
+  //The name of the person whom is displayed in the bar chart
+  var name = data.name;   
+
+  //List of the different skills
+  var categories = Object.keys(data).filter(function (d) {
+    return !(d == "name")   //Filter out the name parameter from the x-axis
+  });
+
+
+
+  //Extract the numbers from the data 
+  var new_values = Object.values(data);
+  new_values = new_values.splice(1);
+
+
+  //This array contains the category and value pair such as ["IVIS", 4]
+  var rows = [];    
+  for (var i = 0; i < new_values.length; i++) {
+    rows[i] = [categories[i], new_values[i]];
+  }
+
+  var names = ["name", "value"];
+
+  //Create a new array with object elements such as {category : IVIS, value : 4} for example
+  var new_data = rows.map(function (row) {
+    return row.reduce(function (result, field, index) {
+      result[names[index]] = field;
+      return result;
+    }, {});
+  });
+
+  var svg;
+
+  //Initialize diagram if it does not already exist
+  if (!$("#diagram").length) {
+    svg = initialize_barchart(new_data, categories, name);
+  }
+  else {
+    //Here we just want to change the data in the diagram
+    //First the height of the bars
+    d3.select("#diagram").selectAll('rect')
+       .data(new_data)
+       .attr("y", function (d) { return y(d.value); })
+     	 .attr("height", function (d) { return height - y(d.value); });
+    //Then the name
+    d3.select("#barchart-name")
+      .text(name);
+
+   // sel.exit().remove();
+   // sel.enter().append("rect");
+  }
+
+
+}
+
+function initialize_barchart(data, categories, name) {
   var margin = { top: 20, right: 20, bottom: 70, left: 40 },
 			width = 600 - margin.left - margin.right,
 			height = 300 - margin.top - margin.bottom;
@@ -174,77 +236,56 @@ function create_barchart(data) {
   var y = d3.scale.linear().range([height, 0]);
 
   var xAxis = d3.svg.axis()
-			.scale(x)
-			.orient("bottom")
-      .ticks(9);
+    .scale(x)
+    .orient("bottom")
+    .ticks(9);
 
   var yAxis = d3.svg.axis()
 		.scale(y)
 		.orient("left")
 		.ticks(10);
 
-  var svg = d3.select("#bar-chart").append("svg")
-			.attr("width", width + margin.left + margin.right)
-			.attr("height", height + margin.top + margin.bottom)
-		.append("g")
-			.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-  var categories;   //List of the different skills
-
-  x.domain(categories = Object.keys(data).filter(function (d) {
-    return !(d == "name")   //Filter out the name parameter from the x-axis
-  }));    //Object.keys(data) returns the names of the variables of the object "data"
+  //Create the domains for the x and y axis
+  x.domain(categories);    //Object.keys(data) returns the names of the variables of the object "data"
   y.domain([0, 10]);
 
-  svg.append("g")
-			.attr("class", "x axis")
-			.attr("transform", "translate(0," + height + ")")
-			.call(xAxis)
-	  .selectAll("text")
-			.style("text-anchor", "end")
-			.attr("dx", "-.8em")
-			.attr("dy", "-.55em")
-			.attr("transform", "rotate(-90)");
-
-  var name = data.name;   //The name of the person
+  var svg = d3.select("#bar-chart").append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+  .append("g")
+    .attr("id", "diagram")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
   svg.append("g")
-			.attr("class", "y axis")
-			.call(yAxis)
-		.append("text")
-			.attr("transform", "rotate(0)")
-			.attr("y", 6)
-			.attr("dy", ".71em")
-      .attr("dx", ".3cm")
-			.style("text-anchor", "front")
-			.text(name);
-  
-  var new_values = Object.values(data);
-  new_values = new_values.splice(1);
+    .attr("class", "x axis")
+    .attr("transform", "translate(0," + height + ")")
+    .call(xAxis)
+  .selectAll("text")
+    .style("text-anchor", "end")
+    .attr("dx", "-.8em")
+    .attr("dy", "-.55em")
+    .attr("transform", "rotate(-90)");
 
-  //Create a new array with object elements such as {category : IVIS, value : 4} for example
-  var names = ["name", "value"];
-  var dataset = []
-  
-  var rows = [];    //This array contains the category and value pair such as ["IVIS", 4]
-  for (var i = 0; i < new_values.length; i++) {
-    rows[i] = [categories[i], new_values[i]];
-  }
-
-  var new_data = rows.map(function (row) {
-    return row.reduce(function (result, field, index) {
-      result[names[index]] = field;
-      return result;
-    }, {});
-  });
+  svg.append("g")
+    .attr("class", "y axis")
+    .call(yAxis)
+  .append("text")
+    .attr("id", "barchart-name")
+    .attr("transform", "rotate(0)")
+    .attr("y", 6)
+    .attr("dy", ".71em")
+    .attr("dx", ".3cm")
+    .style("text-anchor", "front")
+    .text(name);
 
   svg.selectAll("bar")
-			.data(new_data)
+			.data(data)
 		.enter().append("rect")
 			.style("fill", "steelblue")
-			.attr("x", function(d) { return x(d.name); })
+			.attr("x", function (d) { return x(d.name); })
 			.attr("width", x.rangeBand())
 			.attr("y", function (d) { return y(d.value); })
 			.attr("height", function (d) { return height - y(d.value); });
-  
+
+  return svg;
 }

@@ -43,16 +43,28 @@
 
 </style>
 <body>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <script src="//d3js.org/d3.v3.min.js"></script>
     <!--http://ajtroxell.github.io/Division-Grid/-->
     <script type="text/javascript" src="JavaScripts/respond.min.js"></script>
     <script src="JavaScripts/ParallelScript.js"></script>
 
-    <div class="row">
+    <div class="row" style="margin-left:10px">
+      <div class="one-third">
+        <font size="6">Description</font>
+        <p>
+          To select lines drag along any axis.
+        </p>
+
+        <p>
+          To remove selection left click on the axis.
+        </p>
+        
+      </div>
         <div class="one-third">
             <div id="person-list"></div>
         </div>
-        <div class="two-thirds">
+        <div class="one-third">
             <!--Here will be the code for the bar chart-->
           <div id="bar-chart"></div>
         </div>
