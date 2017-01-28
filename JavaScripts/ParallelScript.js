@@ -100,7 +100,8 @@ d3.csv("Data/Proj1-data.csv", function (error, data) {
 //The number of the categories (names of the axes)
 var nrOfCategories = 9;
 //Amount of group members
-var groupMembers = 0;
+var group_members = 0;
+var group_names = [];
 var group_data = [];
 //Initialize the array with zeros
 for (var i = 0; i < nrOfCategories; i++) {
@@ -177,7 +178,7 @@ function data_table(sample) {
 }
 //https://leanpub.com/D3-Tips-and-Tricks
 function create_barchart(data) {
-  console.log(data);
+
   var margin = { top: 20, right: 20, bottom: 70, left: 40 },
   width = 600 - margin.left - margin.right,
   height = 300 - margin.top - margin.bottom;
@@ -218,12 +219,16 @@ function create_barchart(data) {
     //Change the button click funtion
     d3.select("#button").select("input")
       .on("click", function (d) {
-        //Save data in chart and calculate mean value
-        groupMembers++;
-        group_data = group_data.map(function (num, ind) {
-          return (num + +new_data[ind].value) / groupMembers;
-        });
-        (groupchart_exists()) ? update_groupchart(group_data) : create_groupchart(group_data, categories);
+        //Check if this person already is in the group
+        if (!($.inArray(name, group_names) > -1)) {
+          group_members++;
+          group_names[group_members] = name;
+          //Save data in chart and calculate mean value
+          group_data = group_data.map(function (num, ind) {
+            return (num + +new_data[ind].value) / group_members;
+          });
+          (groupchart_exists()) ? update_groupchart() : create_groupchart();
+        }
       });
   }
   
@@ -296,19 +301,20 @@ function initialize_barchart(data, categories, name) {
     .attr("type", "button")
     .attr("value", "Add To Group")
     .on("click", function (d) {
-      //Save data in chart and calculate mean value
-      groupMembers++;
-      group_data = group_data.map(function (num, ind) {
-        return (num + +data[ind].value) / groupMembers;
-      });
-      (groupchart_exists()) ? update_groupchart() : create_groupchart(create_data_array(categories, group_data), categories);
+      //Check if this person already is in the group
+      if (!($.inArray(name, group_names) > -1)) {
+        group_members++;
+        group_names[group_members] = name;
+        //Save data in chart and calculate mean value
+        group_data = group_data.map(function (num, ind) {
+          return (num + +data[ind].value) / group_members;
+        });
+        (groupchart_exists()) ? update_groupchart() : create_groupchart();
+      }
     });
-
-
-  return svg;
 }
 
-function create_groupchart(data, categories){
+function create_groupchart(){
 
   var margin = { top: 20, right: 20, bottom: 70, left: 40 },
   width = 800 - margin.left - margin.right,
@@ -317,25 +323,18 @@ function create_groupchart(data, categories){
   var y = d3.scale.linear().range([height, 0]);
   y.domain([0, 10]);
 
-  var new_data = create_data_array(categories, data);
-
   //Initialize diagram if it does not already exist
   if (!$("#group-diagram").length) {
-    initialize_groupchart(data, categories, name);
+    initialize_groupchart(group_data, categories, name);
   }
   else {
-    //Here we just want to change the data in the diagram
-    //First the height of the bars
-    d3.select("#group-diagram").selectAll('rect')
-       .data(new_data)
-       .attr("y", function (d) { return y(d.value); })
-     	 .attr("height", function (d) { return height - y(d.value); });
+    update_groupchart();
   }
 
 }
 
 function initialize_groupchart(data, categories, name) {
-  console.log(data);
+
   var margin = { top: 20, right: 20, bottom: 70, left: 40 },
   width = 800 - margin.left - margin.right,
   height = 450 - margin.top - margin.bottom;
@@ -356,6 +355,8 @@ function initialize_groupchart(data, categories, name) {
   //Create the domains for the x and y axis
   x.domain(categories);    //Object.keys(data) returns the names of the variables of the object "data"
   y.domain([0, 10]);
+
+  data = create_data_array(categories, data);
 
   var svg = d3.select("#group-chart").append("svg")
     .attr("width", width + margin.left + margin.right)
@@ -384,7 +385,7 @@ function initialize_groupchart(data, categories, name) {
     .attr("dy", ".71em")
     .attr("dx", ".3cm")
     .style("text-anchor", "front")
-    .text("Name");
+    .text("Mean of group members");
 
   svg.selectAll("bar")
 			.data(data)
@@ -398,13 +399,13 @@ function initialize_groupchart(data, categories, name) {
 }
 
 function update_groupchart() {
+
   var margin = { top: 20, right: 20, bottom: 70, left: 40 },
   height = 450 - margin.top - margin.bottom;
   var y = d3.scale.linear().range([height, 0]);
   y.domain([0, 10]);
 
-  console.log(group_data);
-
+  //Here we just want to change the data in the diagram
   d3.select("#group-diagram").selectAll('rect')
    .data(group_data)
    .attr("y", function (d) { return y(d); })
