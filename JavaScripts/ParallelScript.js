@@ -20,6 +20,7 @@ var svg = d3.select("body").append("svg")
   .append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
+//Reads the data and creates the parallel coordinate graph
 d3.csv("Data/Proj1-data.csv", function (error, data) {
 
   // Extract the list of dimensions and create a scale for each.
@@ -96,6 +97,17 @@ d3.csv("Data/Proj1-data.csv", function (error, data) {
       .attr("width", 16);
 });
 
+//The number of the categories (names of the axes)
+var nrOfCategories = 9;
+//Amount of group members
+var groupMembers = 0;
+var group_data = [];
+//Initialize the array with zeros
+for (var i = 0; i < nrOfCategories; i++) {
+  group_data[i] = 0;
+}
+
+
 function position(d) {
   var v = dragging[d];
   return v == null ? x(d) : v;
@@ -165,6 +177,7 @@ function data_table(sample) {
 }
 //https://leanpub.com/D3-Tips-and-Tricks
 function create_barchart(data) {
+
   var margin = { top: 20, right: 20, bottom: 70, left: 40 },
   width = 600 - margin.left - margin.right,
   height = 300 - margin.top - margin.bottom;
@@ -179,8 +192,6 @@ function create_barchart(data) {
   var categories = Object.keys(data).filter(function (d) {
     return !(d == "name")   //Filter out the name parameter from the x-axis
   });
-
-
 
   //Extract the numbers from the data 
   var new_values = Object.values(data);
@@ -219,12 +230,17 @@ function create_barchart(data) {
     //Then the name
     d3.select("#barchart-name")
       .text(name);
-
-   // sel.exit().remove();
-   // sel.enter().append("rect");
+    //Change the button click funtion
+    d3.select("#button").select("input")
+      .on("click", function (d) {
+        //Save data in chart and calculate mean value
+        groupMembers++;
+        group_data = group_data.map(function (num, ind) {
+          return (num + +new_data[ind].value) / groupMembers;
+        });
+      });
   }
-
-
+  
 }
 
 function initialize_barchart(data, categories, name) {
@@ -287,5 +303,24 @@ function initialize_barchart(data, categories, name) {
 			.attr("y", function (d) { return y(d.value); })
 			.attr("height", function (d) { return height - y(d.value); });
 
+  //Create a button
+  d3.select("#button").append("input")
+    .attr("name", "addToGroup")
+    .attr("type", "button")
+    .attr("value", "Add To Group")
+    .on("click", function (d) {
+      //Save data in chart and calculate mean value
+      groupMembers++;
+      group_data = group_data.map(function (num, ind) {
+        return (num + +data[ind].value) / groupMembers;
+      });
+    });
+
+
   return svg;
+}
+
+function update_group(data) {
+  console.log(data);
+
 }
