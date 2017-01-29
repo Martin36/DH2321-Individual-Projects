@@ -101,6 +101,7 @@ d3.csv("Data/Proj1-data.csv", function (error, data) {
 var nrOfCategories = 9;
 //Amount of group members
 var group_members = 0;
+var group_member_data = [];		//Array of member objects 
 var group_names = [];
 var group_data = [];
 //Initialize the array with zeros
@@ -108,6 +109,7 @@ for (var i = 0; i < nrOfCategories; i++) {
   group_data[i] = 0;
 }
 var categories;
+var selected_person;
 
 function position(d) {
   var v = dragging[d];
@@ -151,28 +153,56 @@ function brush() {
 
 // simple data table
 function data_table(sample) {
-  // sort by first column
-  var sample = sample.sort(function (a, b) {
-    var col = d3.keys(a)[0];
-    return a[col] < b[col] ? -1 : 1;
-  });
+	// sort by first column
+	var sample = sample.sort(function (a, b) {
+		var col = d3.keys(a)[0];
+		return a[col] < b[col] ? -1 : 1;
+	});
 
-  var table = d3.select("#person-list")
+	var table = d3.select("#person-list")
     .html("")
     .selectAll(".row")
       .data(sample)
     .enter().append("div")
 		.on("click", function (d) {
-		  //Function for selecting the person pressed and show a diagram of that persons skills
-		  create_barchart(d);
+			//Function for selecting the person pressed and show a diagram of that persons skills
+			create_barchart(d);
 		});
 
-  table
+	table
     .append("span")
       .attr("class", "color-block")
       .style("background", "#FF0000")
 
-  table
+	table
+    .append("span")
+      .text(function (d) { return d.name; })
+}
+
+function group_data_table(sample) {
+	// sort by first column
+	var sample = sample.sort(function (a, b) {
+		var col = d3.keys(a)[0];
+		return a[col] < b[col] ? -1 : 1;
+	});
+	console.log(sample);
+	console.log(group_members);
+	var table = d3.select("#group-member-list")
+    .html("")
+    .selectAll(".row")
+      .data(sample)
+    .enter().append("div")
+		.on("click", function (d) {
+			//Function for selecting the person pressed and show a diagram of that persons skills
+			create_barchart(d);
+		});
+
+	table
+    .append("span")
+      .attr("class", "color-block")
+      .style("background", "#FF0000")
+
+	table
     .append("span")
       .text(function (d) { return d.name; })
 }
@@ -202,6 +232,7 @@ function create_barchart(data) {
 
   //Initialize diagram if it does not already exist
   if (!$("#diagram").length) {
+  	selected_person = data;
     initialize_barchart(new_data, categories, name);
   }
   else {
@@ -218,15 +249,18 @@ function create_barchart(data) {
     d3.select("#button").select("input")
       .on("click", function (d) {
         //Check if this person already is in the group
-        if (!($.inArray(name, group_names) > -1)) {
-          group_members++;
-          group_names[group_members] = name;
+      	if (!($.inArray(name, group_names) > -1)) {
+      		group_names[group_members] = name;
+      		group_member_data[group_members] = data;
+      		group_members++;		//Add the group member after since arrays start with index 0
           //Save data in chart and calculate mean value
           group_data = group_data.map(function (num, ind) {
             return (num + +new_data[ind].value) / group_members;
           });
           (groupchart_exists()) ? update_groupchart() : create_groupchart();
-        }
+          group_data_table(group_member_data);
+       }
+
       });
   }
   
@@ -300,14 +334,16 @@ function initialize_barchart(data, categories, name) {
     .attr("value", "Add To Group")
     .on("click", function (d) {
       //Check if this person already is in the group
-      if (!($.inArray(name, group_names) > -1)) {
-        group_members++;
-        group_names[group_members] = name;
-        //Save data in chart and calculate mean value
+    	if (!($.inArray(name, group_names) > -1)) {
+      	group_names[group_members] = name;
+      	group_member_data[group_members] = selected_person;
+      	group_members++;
+    		//Save data in chart and calculate mean value
         group_data = group_data.map(function (num, ind) {
           return (num + +data[ind].value) / group_members;
         });
         (groupchart_exists()) ? update_groupchart() : create_groupchart();
+        group_data_table(group_member_data);
       }
     });
 }
