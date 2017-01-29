@@ -185,8 +185,7 @@ function group_data_table(sample) {
 		var col = d3.keys(a)[0];
 		return a[col] < b[col] ? -1 : 1;
 	});
-	console.log(sample);
-	console.log(group_members);
+
 	var table = d3.select("#group-member-list")
     .html("")
     .selectAll(".row")
@@ -198,9 +197,9 @@ function group_data_table(sample) {
 		});
 
 	table
-    .append("span")
-      .attr("class", "color-block")
-      .style("background", "#FF0000")
+	.append("span")
+		.attr("class", "color-block")
+		.style("background", "#FF0000")
 
 	table
     .append("span")
@@ -418,6 +417,7 @@ function initialize_groupchart(data, categories, name) {
     .attr("y", 6)
     .attr("dy", ".71em")
     .attr("dx", ".3cm")
+		.attr("font-size", "15")
     .style("text-anchor", "front")
     .text("Mean of group members");
 

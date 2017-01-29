@@ -52,28 +52,30 @@
     <div class="row" style="margin-left:10px">
       <div class="one-third">
         <font size="6">Description</font>
-        <p>
-          To select lines drag along any axis.
-        </p>
-
-        <p>
-          To remove selection left click on the axis.
-        </p>
+				<p>First use the parallel coordinate graph above to sort out a few persons.</p>
+        <p>To select lines drag along any axis.</p>
+        <p>To remove selection left click on the axis.</p>
+				<p>To select a person for inspection press their name in the list to the right.</p>
         
       </div>
         <div class="one-third">
-            <div id="person-list"></div>
+					<font size="6">List of persons with the criteria from above</font>
+
+            <div id="person-list" style="margin-top: 10px"></div>
         </div>
         <div class="one-third">
-            <!--Here will be the code for the bar chart-->
+					<font size="6">Bar chart showing your selected person</font>
+
           <div id="bar-chart"></div>
           <div id="button"></div>
         </div>
     </div>
     <div class="row" style="margin-left: 0px; margin-right: 0px">
-      <div class="half" id="group-chart" style="margin-left: 0px"></div>
-      
-      <div class="half" id="group-member-list"></div>
+      <div id="group-chart" style="margin-left: 0px; height:450px; width:800px"></div>
+			<div style="margin-bottom: 10px"><font size="6">List of group members</font></div>      
+      <div id="group-member-list">
+				
+			</div>
        
     </div>
     
