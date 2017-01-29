@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<head>
+    <!--http://ajtroxell.github.io/Division-Grid/-->
+    <link rel="stylesheet" href="CSS/division.min.css">
+    <link rel="stylesheet" href="CSS/reset.min.css">
+
+    <link rel="stylesheet" href="CSS/myStyleSheet.css">
+</head>
+<style>
+    svg {
+        font: 10px sans-serif;
+    }
+
+    .background path {
+        fill: none;
+        stroke: #ddd;
+        shape-rendering: crispEdges;
+    }
+
+    .foreground path {
+        fill: none;
+        stroke: steelblue;
+    }
+
+    .brush .extent {
+        fill-opacity: .3;
+        stroke: #fff;
+        shape-rendering: crispEdges;
+    }
+
+    .axis line,
+    .axis path {
+        fill: none;
+        stroke: #000;
+        shape-rendering: crispEdges;
+    }
+
+    .axis text {
+        text-shadow: 0 1px 0 #fff, 1px 0 0 #fff, 0 -1px 0 #fff, -1px 0 0 #fff;
+        cursor: move;
+    }
+
+</style>
+<body>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="//d3js.org/d3.v3.min.js"></script>
+    <!--http://ajtroxell.github.io/Division-Grid/-->
+    <script type="text/javascript" src="JavaScripts/respond.min.js"></script>
+    <script src="JavaScripts/ParallelScript.js"></script>
+				
+    <div class="row" style="margin-left:10px">
+      <div class="one-third">
+        <font size="6">Description</font>
+				<p>First use the parallel coordinate graph above to sort out a few persons.</p>
+        <p>To select lines drag along any axis.</p>
+        <p>To remove selection left click on the axis.</p>
+				<p>To select a person for inspection press their name in the list to the right.</p>
+        
+      </div>
+        <div class="one-third">
+					<font size="6">List of persons with the criteria from above</font>
+
+            <div id="person-list" style="margin-top: 10px"></div>
+        </div>
+        <div class="one-third">
+					<font size="6">Bar chart showing your selected person</font>
+
+          <div id="bar-chart"></div>
+          <div id="button"></div>
+        </div>
+    </div>
+    <div class="row" style="margin-left: 0px; margin-right: 0px">
+      <div id="group-chart" style="margin-left: 0px; height:450px; width:800px"></div>
+			<div style="margin-bottom: 10px"><font size="6">List of group members</font></div>      
+      <div id="group-member-list">
+				
+			</div>
+       
+    </div>
+    
+     
+</body>
