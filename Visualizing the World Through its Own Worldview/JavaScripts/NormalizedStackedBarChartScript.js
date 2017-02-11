@@ -22,7 +22,10 @@ var stack = d3.stack()
 d3.csv("Data/Feeling_of_happiness.csv", type, function (error, data) {
   if (error) throw error;
 
-  data.sort(function (a, b) { return b[data.columns[1]] / b.total - a[data.columns[1]] / a.total; });
+  //Summarize the last 3 columns to one column
+  console.log(data);
+
+  //data.sort(function (a, b) { return b[data.columns[1]] / b.total - a[data.columns[1]] / a.total; });
 
   x.domain(data.map(function (d) { return d.State; }));
   z.domain(data.columns.slice(1));
