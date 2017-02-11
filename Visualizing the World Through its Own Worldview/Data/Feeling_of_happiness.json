@@ -1,0 +1,62 @@
+﻿[
+    {
+        "Country": "TOTAL",
+        "Very happy": "32.40",
+        "Rather happy": "51.10",
+        "Not very happy": "12.80",
+        "Not at all happy": "2.90",
+        "Inappropriate response": "0.00",
+        "No answer": "0.30",
+        "Don´t know": "0.60"       
+    },
+    {
+        "Country": "Algeria",
+        "Very happy": "17.60",
+        "Rather happy": "57.90",
+        "Not very happy": "15.20",
+        "Not at all happy": "3.80",
+        "Inappropriate response": "0.00",
+        "No answer": "5.50",
+        "Don´t know": "0.00"
+    },
+    {
+        "Country": "Azerbaijan",
+        "Very happy": "27.20",
+        "Rather happy": "53.40",
+        "Not very happy": "16.80",
+        "Not at all happy": "2.60",
+        "Inappropriate response": "0.00",
+        "No answer": "0.00",
+        "Don´t know": "0.00"
+    },
+    {
+        "Country": "Argentina",
+        "Very happy": "33.30",
+        "Rather happy": "53.10",
+        "Not very happy": "11.60",
+        "Not at all happy": "1.00",
+        "Inappropriate response": "0.00",
+        "No answer": "0.50",
+        "Don´t know": "0.50"
+    },
+    {
+        "Country": "Australia",
+        "Very happy": "34.90",
+        "Rather happy": "57.70",
+        "Not very happy": "6.20",
+        "Not at all happy": "0.50",
+        "Inappropriate response": "0.00",
+        "No answer": "0.70",
+        "Don´t know": "0.00"
+    },
+    {
+        "Country": "Bahrain",
+        "Very happy": "21.80",
+        "Rather happy": "50.80",
+        "Not very happy": "20.40",
+        "Not at all happy": "6.60",
+        "Inappropriate response": "0.00",
+        "No answer": "0.00",
+        "Don´t know": "0.30"       
+    }
+]
