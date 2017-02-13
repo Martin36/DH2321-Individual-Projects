@@ -19,8 +19,11 @@ var z = d3.scaleOrdinal()
 var stack = d3.stack()
     .offset(d3.stackOffsetExpand);
 
-d3.csv("Data/Feeling_of_happiness.csv", type, function (error, data) {
+d3.csv("Data/Feeling_of_happiness2.csv", type, function (error, data) {
   if (error) throw error;
+
+  var dataStats = new dataStatistics();
+  data = dataStats.addColumns(data, ['Inappropriate response', 'No answer', "Don´t know"]);
 
   //Summarize the last 3 columns to one column
   console.log(data);
