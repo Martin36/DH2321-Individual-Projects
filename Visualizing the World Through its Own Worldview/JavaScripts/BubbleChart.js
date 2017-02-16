@@ -49,7 +49,10 @@ d3.csv("Data/flare.csv", function (d) {
   node.append("text")
       .attr("clip-path", function (d) { return "url(#clip-" + d.id + ")"; })
     .selectAll("tspan")
-    .data(function (d) { return d.class.split(/(?=[A-Z][^A-Z])/g); })
+    .data(function (d) {
+      console.log(d);
+      return d.class.split(/(?=[A-Z][^A-Z])/g);
+    })
     .enter().append("tspan")
       .attr("x", 0)
       .attr("y", function (d, i, nodes) { return 13 + (i - nodes.length / 2 - 0.5) * 10; })
