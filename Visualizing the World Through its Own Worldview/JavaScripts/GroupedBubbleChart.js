@@ -1,13 +1,11 @@
 ﻿//The dimensions of the SVG element
-var width = 1000,
-    height = 700;
+var width = d3.select("svg").attr("width"),
+    height = d3.select("svg").attr("height");
 
 //Creates the SVG element where the chart will be created
-var chart = d3.select("body").append("svg")
-  .attr("width", width)
-  .attr("height", height)
+var chart = d3.select("svg")
   .append("g")
-    .attr("transform", "translate(10,10)");
+    .attr("transform", "translate(0,0)");
 
 //Create the pack layout
 var pack = d3.pack()
@@ -55,7 +53,6 @@ d3.csv("Data/Feeling_of_happiness_average.csv", function (error, data) {
          selected.push(d.data);
          //Set color to red
          d3.select(this).style("fill", "rgb(255, 0, 0)");
-
        }
 
      })
@@ -77,3 +74,41 @@ d3.csv("Data/Feeling_of_happiness_average.csv", function (error, data) {
       .attr("y", function (d, i, nodes) { return 13 + (i - nodes.length / 2 - 0.5) * 10; })
       .text(function (d) { return d; });
 });
+createListOfVariables();
+
+//Function for creating a list of variables where the user can select which ones they want to see
+function createListOfVariables() {
+  //First we need to gather the different categories from the data files
+  //Then we need to load the data
+
+  //Array containing the names of the variables
+  var questionsArray = [
+    "Feeling of happiness",
+    "Important in life",
+    "Satisfaction with your life"
+  ]
+
+  //Create an checkbox element for each variable
+  for (var i = 0; i < questionsArray.length; i++) {
+    //Select the correct div
+    var div = d3.select("#listOfVariables");
+    //Append the input with checkbox property
+    div.append("input")
+      .attr("type", "checkbox")
+      .attr("name", questionsArray[i])
+      .attr("value", questionsArray[i]);
+
+    //Append a label
+    div.append("label")
+      .attr("for", questionsArray[i])
+      .text(questionsArray[i]);
+
+    //Add a break
+    div.append("br");
+  }
+}
+
+//Function for loading the data of the variables
+function loadData() {
+
+}
