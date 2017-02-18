@@ -1,4 +1,6 @@
-﻿//The dimensions of the SVG element
+﻿loadData();
+
+//The dimensions of the SVG element
 var width = d3.select("svg").attr("width"),
     height = d3.select("svg").attr("height");
 
@@ -77,7 +79,7 @@ d3.csv("Data/Feeling_of_happiness_average.csv", function (error, data) {
 });
 createListOfVariables();
 
-//Function for creating a list of variables where the user can select which ones they want to see
+//Function for creating a list with checkboxes of variables where the user can select which ones they want to see
 function createListOfVariables() {
 
   //Array containing the names of the variables
@@ -117,10 +119,48 @@ function createListOfVariables() {
 
     //Add a break
     div.append("br");
+
+    //Add a button for creating the bar chart
+
   };
 }
 
 //Function for loading the data of the variables
 function loadData() {
+
+  d3.queue()
+    .defer(d3.csv, "Data/Feeling_of_happiness_average.csv")
+    .defer(d3.csv, "Data/Important_in_life_Family_Wave6.csv")
+    .defer(d3.csv, "Data/Satisfaction_with_your_life_Wave6.csv")
+    .await(function (error, feelings, family, satisfaction) {
+      if (error) { console.log(error); };
+
+      //Remove any empty properties of the objects
+      for (var i = 0; i < feelings.length; i++) {
+        clean(feelings[i]);
+      }
+      for (var i = 0; i < family.length; i++) {
+        clean(family[i]);
+      }
+      for (var i = 0; i < satisfaction.length; i++) {
+        clean(satisfaction[i]);
+      }
+
+      console.log(feelings);
+      console.log(family);
+      console.log(satisfaction);
+    })
+}
+//http://stackoverflow.com/questions/286141/remove-blank-attributes-from-an-object-in-javascript
+//Remove any properties that are empty i.e. ""
+function clean(obj) {
+  for (var propName in obj) {
+    if (obj[propName] === "") {
+      delete obj[propName];
+    }
+  }
+}
+//Function for creating the stacked bar chart with the previously specified variables and countries
+function createBarChart() {
 
 }

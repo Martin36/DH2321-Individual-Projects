@@ -26,11 +26,11 @@ d3.csv("Data/Feeling_of_happiness2.csv", type, function (error, data) {
   data = dataStats.addColumns(data, ['Inappropriate response', 'No answer', "Don´t know"]);
 
   //Summarize the last 3 columns to one column
-  console.log(data);
+  //console.log(data);
 
   //data.sort(function (a, b) { return b[data.columns[1]] / b.total - a[data.columns[1]] / a.total; });
 
-  x.domain(data.map(function (d) { return d.State; }));
+  x.domain(data.map(function (d) { return d.Country; }));
   z.domain(data.columns.slice(1));
 
   var serie = g.selectAll(".serie")
@@ -42,7 +42,7 @@ d3.csv("Data/Feeling_of_happiness2.csv", type, function (error, data) {
   serie.selectAll("rect")
     .data(function (d) { return d; })
     .enter().append("rect")
-      .attr("x", function (d) { return x(d.data.State); })
+      .attr("x", function (d) { return x(d.data.Country); })
       .attr("y", function (d) { return y(d[1]); })
       .attr("height", function (d) { return y(d[0]) - y(d[1]); })
       .attr("width", x.bandwidth());
@@ -58,7 +58,7 @@ d3.csv("Data/Feeling_of_happiness2.csv", type, function (error, data) {
 
   var legend = serie.append("g")
       .attr("class", "legend")
-      .attr("transform", function (d) { var d = d[d.length - 1]; return "translate(" + (x(d.data.State) + x.bandwidth()) + "," + ((y(d[0]) + y(d[1])) / 2) + ")"; });
+      .attr("transform", function (d) { var d = d[d.length - 1]; return "translate(" + (x(d.data.Country) + x.bandwidth()) + "," + ((y(d[0]) + y(d[1])) / 2) + ")"; });
 
   legend.append("line")
       .attr("x1", -6)
