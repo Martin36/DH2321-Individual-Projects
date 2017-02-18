@@ -145,10 +145,6 @@ function loadData() {
       for (var i = 0; i < satisfaction.length; i++) {
         clean(satisfaction[i]);
       }
-
-      console.log(feelings);
-      console.log(family);
-      console.log(satisfaction);
     })
 }
 //http://stackoverflow.com/questions/286141/remove-blank-attributes-from-an-object-in-javascript
