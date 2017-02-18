@@ -12,8 +12,9 @@ var pack = d3.pack()
   .size([width, height - 50])
   .padding(1);
 
-//Array to hold selections
-var selected = [];
+//Arrays to hold selections
+var selectedCountries = [];
+var selectedVariables = [];
 
 //Load the data
 d3.csv("Data/Feeling_of_happiness_average.csv", function (error, data) {
@@ -78,34 +79,45 @@ createListOfVariables();
 
 //Function for creating a list of variables where the user can select which ones they want to see
 function createListOfVariables() {
-  //First we need to gather the different categories from the data files
-  //Then we need to load the data
 
   //Array containing the names of the variables
-  var questionsArray = [
+  var variablesArray = [
     "Feeling of happiness",
     "Important in life",
     "Satisfaction with your life"
-  ]
+  ];
 
   //Create an checkbox element for each variable
-  for (var i = 0; i < questionsArray.length; i++) {
+  for (var i = 0; i < variablesArray.length; i++) {
     //Select the correct div
     var div = d3.select("#listOfVariables");
     //Append the input with checkbox property
     div.append("input")
       .attr("type", "checkbox")
-      .attr("name", questionsArray[i])
-      .attr("value", questionsArray[i]);
+      .attr("name", variablesArray[i])
+      .attr("value", variablesArray[i])
+      .on("change", function () {   //This function is called when the checkbox is clicked
+        if (this.checked) {
+          //Add the variable to the selected ones
+          selectedVariables.push(this.value);
+          console.log(selectedVariables);
+        } else {
+          //Remove the variable from the selected ones
+          var index = selectedVariables.indexOf(this.value);
+          if (index >= 0) {
+            selectedVariables.splice(index, 1);
+          }
+        }
+      })
 
     //Append a label
     div.append("label")
-      .attr("for", questionsArray[i])
-      .text(questionsArray[i]);
+      .attr("for", variablesArray[i])
+      .text(variablesArray[i]);
 
     //Add a break
     div.append("br");
-  }
+  };
 }
 
 //Function for loading the data of the variables
