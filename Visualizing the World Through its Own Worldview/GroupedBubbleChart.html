@@ -1,23 +1,28 @@
 ﻿<!DOCTYPE html>
 <meta charset="utf-8">
 <head>
-  <link href="css/bootstrap.min.css" rel="stylesheet" media="screen">
-</head>
-<body>
-  <svg id="countriesGrouped" width="1000" height="700"></svg>
-  <div class="row">
-    <div id="listOfVariables" class="md-4"></div>
-    <div id="createBarchartButton" class="md-4"></div>
-  </div>
-  <svg id="stackedBarChart" width="1000" height="700"></svg>
   <!-- jQuery-->
   <script src="http://code.jquery.com/jquery.js"></script>
-  <!-- Bootstrap-->  
+  <!-- Bootstrap-->
+  <!--
   <script src="Externals/bootstrap/js/bootstrap.min.js"></script>
+  <link href="Externals/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+  -->
+  <link href="CSS/MyCSS.css" rel="stylesheet" />
+  
+</head>
+<body>
+  
+  <svg id="countriesGrouped" width="1000" height="700"></svg>
+  
+  <div id="listOfVariables"></div>
+  <div id="createBarchartButton"></div>
+
+  <svg id="stackedBarChart" width="1000" height="500"></svg>
   <!-- D3 scripts-->
   <script src="http://d3js.org/d3.v4.min.js"></script>
   <script src="https://d3js.org/d3-queue.v3.min.js"></script>
   <!-- My Scripts-->
+  <script src="JavaScripts/DataStatistics.js"></script>
   <script src="JavaScripts/GroupedBubbleChart.js"></script>
-
 </body>
