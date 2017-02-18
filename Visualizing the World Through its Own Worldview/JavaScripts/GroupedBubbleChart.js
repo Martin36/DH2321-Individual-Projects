@@ -190,22 +190,28 @@ function loadData() {
 //http://stackoverflow.com/questions/286141/remove-blank-attributes-from-an-object-in-javascript
 //Remove any properties that are empty i.e. ""
 function clean(obj) {
-  var counter = 0;
-  for (var propName in obj) {
-    if (obj[propName] === "") {
-      delete obj[propName];
-      counter++;
-    }
-  }
-  //If obj is an array then change the size of it
+ 
   if (Array.isArray(obj)) {
-    obj.length = obj.length - counter;
+    for (var i = 0; i < obj.length; i++) {
+      if (obj[i] === "") {
+        delete obj[i];
+      }
+    }
+  } else {
+    for (var propName in obj) {
+      if (obj[propName] === "") {
+        delete obj[propName];
+      }
+    }
   }
 }
 
 //https://bl.ocks.org/mbostock/3886394
 //Function for creating the stacked bar chart with the previously specified variables and countries
 function createBarChart() {
+  //Clear the SVG if there already exists a var chart
+  $("svg#stackedBarChart").empty();
+
   //Set up the SVG element and append a group
   var svg = d3.select("svg#stackedBarChart"),
       margin = { top: 20, right: 60, bottom: 30, left: 40 },
@@ -245,6 +251,8 @@ function createBarChart() {
   data = filterCountries(data);
   //Re-add the columns array to the dataset 
   data.columns = columns;
+
+  console.log(columns);
 
   x.domain(data.map(function (d) { return d.Country; }));
   z.domain(data.columns.slice(1));
