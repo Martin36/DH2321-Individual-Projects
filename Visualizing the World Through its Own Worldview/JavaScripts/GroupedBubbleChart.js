@@ -12,11 +12,10 @@ var variablesArray = [
 
 createCountryBubbles();
 
-loadData();
-
 createListOfVariables();
 
-//createBarChart();
+loadData();
+
 //Function for creating the grouped bubbles chart with the countries
 function createCountryBubbles() {
 
@@ -66,15 +65,24 @@ function createCountryBubbles() {
            selectedCountries.splice(index, 1);
            //Set color back to normal
            d3.select(this).style("fill", "rgb(158, 154, 200)");
+           //Disable the create bar chart button if selectedCountries are empty
+           if (selectedCountries.length == 0) {
+             $('#createBarchartButton input[name="barchartButton"]')
+                .attr("disabled", true);
+           }
          }
          else {
            //Add the selected country to an array
            selectedCountries.push(d.data.Country);
            //Set color to red
            d3.select(this).style("fill", "rgb(255, 0, 0)");
+           //Enable the create bar chart button if a variable is selected
+           if (selectedVariables.length != 0) {
+             $('#createBarchartButton input[name="barchartButton"]')
+                .attr("disabled", false);
+           }
          }
-
-       })
+       });
     /*    .on("mouseover", function (d) {
           d3.select(this).style("fill", "rgb(255, 0, 0)");
         })
@@ -112,12 +120,21 @@ function createListOfVariables() {
         if (this.checked) {
           //Add the variable to the selected ones
           selectedVariables.push(this.value);
-          console.log(selectedVariables);
+          //Enable button if any countries are selected
+          if (selectedCountries != 0) {
+            $('#createBarchartButton input[name="barchartButton"]')
+               .attr("disabled", false);
+          }
         } else {
           //Remove the variable from the selected ones
           var index = selectedVariables.indexOf(this.value);
           if (index >= 0) {
             selectedVariables.splice(index, 1);
+          }
+          //Disable button if selectedVariables if empty
+          if (selectedVariables == 0) {
+            $('#createBarchartButton input[name="barchartButton"]')
+               .attr("disabled", true);
           }
         }
       })
@@ -135,6 +152,7 @@ function createListOfVariables() {
     .attr("name", "barchartButton")
     .attr("value", "Create Bar Chart")
     .attr("type", "button")
+    .attr("disabled", true)
     .on("click", function () {
       createBarChart();
     })
