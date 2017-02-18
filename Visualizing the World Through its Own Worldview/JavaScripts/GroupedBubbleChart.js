@@ -59,7 +59,7 @@ function createCountryBubbles() {
        .style("fill", "rgb(158, 154, 200)")
        .on("click", function (d) {
          //Find index of the element
-         var index = selectedCountries.indexOf(d.data);
+         var index = selectedCountries.indexOf(d.data.Country);
          //Check if country aleady is selected, otherwise we want to remove it
          if (index >= 0) {
            //Remove the element from the array
@@ -69,7 +69,7 @@ function createCountryBubbles() {
          }
          else {
            //Add the selected country to an array
-           selectedCountries.push(d.data);
+           selectedCountries.push(d.data.Country);
            //Set color to red
            d3.select(this).style("fill", "rgb(255, 0, 0)");
          }
@@ -165,8 +165,6 @@ function loadData() {
       dataArray[variablesArray[0]] = feelings;
       dataArray[variablesArray[1]] = family;
       dataArray[variablesArray[2]] = satisfaction;
-      console.log(dataArray);
-
       
     })
 }
@@ -174,95 +172,109 @@ function loadData() {
 //http://stackoverflow.com/questions/286141/remove-blank-attributes-from-an-object-in-javascript
 //Remove any properties that are empty i.e. ""
 function clean(obj) {
+  var counter = 0;
   for (var propName in obj) {
     if (obj[propName] === "") {
       delete obj[propName];
+      counter++;
     }
+  }
+  //If obj is an array then change the size of it
+  if (Array.isArray(obj)) {
+    obj.length = obj.length - counter;
   }
 }
 
 //https://bl.ocks.org/mbostock/3886394
 //Function for creating the stacked bar chart with the previously specified variables and countries
 function createBarChart() {
-
+  //Set up the SVG element and append a group
   var svg = d3.select("svg#stackedBarChart"),
       margin = { top: 20, right: 60, bottom: 30, left: 40 },
       width = +svg.attr("width") - margin.left - margin.right,
       height = +svg.attr("height") - margin.top - margin.bottom,
       g = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
+  //Create the scaling for the x-axis
   var x = d3.scaleBand()
       .rangeRound([0, width])
       .padding(0.1)
       .align(0.1);
 
+  //Create the scaling for the y-axis
   var y = d3.scaleLinear()
       .rangeRound([height, 0]);
 
+  //Create the color scale
   var z = d3.scaleOrdinal()
       .range(["#98abc5", "#8a89a6", "#7b6888", "#6b486b", "#a05d56", "#d0743c", "#ff8c00"]);
 
   var stack = d3.stack()
       .offset(d3.stackOffsetExpand);
-
-  d3.csv("Data/Feeling_of_happiness2.csv", type, function (error, data) {
-    if (error) throw error;
-
-    //Summarize the last 3 columns to one column
-    var dataStats = new dataStatistics();
-    data = dataStats.addColumns(data, ['Inappropriate response', 'No answer', "Don´t know"]);
-
-    //console.log(data);
-
-    //data.sort(function (a, b) { return b[data.columns[1]] / b.total - a[data.columns[1]] / a.total; });
-
-    x.domain(data.map(function (d) { return d.Country; }));
-    z.domain(data.columns.slice(1));
-
-    var serie = g.selectAll(".serie")
-      .data(stack.keys(data.columns.slice(1))(data))
-      .enter().append("g")
-        .attr("class", "serie")
-        .attr("fill", function (d) { return z(d.key); });
-
-    serie.selectAll("rect")
-      .data(function (d) { return d; })
-      .enter().append("rect")
-        .attr("x", function (d) { return x(d.data.Country); })
-        .attr("y", function (d) { return y(d[1]); })
-        .attr("height", function (d) { return y(d[0]) - y(d[1]); })
-        .attr("width", x.bandwidth());
-
-    g.append("g")
-        .attr("class", "axis axis--x")
-        .attr("transform", "translate(0," + height + ")")
-        .call(d3.axisBottom(x));
-
-    g.append("g")
-        .attr("class", "axis axis--y")
-        .call(d3.axisLeft(y).ticks(10, "%"));
-
-    var legend = serie.append("g")
-        .attr("class", "legend")
-        .attr("transform", function (d) { var d = d[d.length - 1]; return "translate(" + (x(d.data.Country) + x.bandwidth()) + "," + ((y(d[0]) + y(d[1])) / 2) + ")"; });
-
-    legend.append("line")
-        .attr("x1", -6)
-        .attr("x2", 6)
-        .attr("stroke", "#000");
-
-    legend.append("text")
-        .attr("x", 9)
-        .attr("dy", "0.35em")
-        .attr("fill", "#000")
-        .style("font", "10px sans-serif")
-        .text(function (d) { return d.key; });
-  });
-
-  function type(d, i, columns) {
-    for (i = 1, t = 0; i < columns.length; ++i) t += d[columns[i]] = +d[columns[i]];
-    d.total = t;
-    return d;
+  //TODO: This needs to be modified so that the user can select multiple variables to show
+  var data = dataArray[selectedVariables[0]];
+  //Remove "average" from data
+  for (var i = 0; i < data.length; i++) {
+    delete data[i].Average;
   }
+  //And also from the columns
+  data.columns.splice(data.columns.indexOf("Average"), 1);
+  //Save the columns array before filtering
+  var columns = data.columns;
+  //Clean the columns array of all the empty entries
+  clean(columns);
+  //Filter the data, so that only the selected countries are left in the set (this function will remove the "columns" array
+  data = filterCountries(data);
+  //Re-add the columns array to the dataset 
+  data.columns = columns;
 
+  x.domain(data.map(function (d) { return d.Country; }));
+  z.domain(data.columns.slice(1));
+
+  var serie = g.selectAll(".serie")
+    .data(stack.keys(data.columns.slice(1))(data))
+    .enter().append("g")
+      .attr("class", "serie")
+      .attr("fill", function (d) { return z(d.key); });
+
+  serie.selectAll("rect")
+    .data(function (d) { return d; })
+    .enter().append("rect")
+      .attr("x", function (d) { return x(d.data.Country); })
+      .attr("y", function (d) { return y(d[1]); })
+      .attr("height", function (d) { return y(d[0]) - y(d[1]); })
+      .attr("width", x.bandwidth());
+
+  g.append("g")
+      .attr("class", "axis axis--x")
+      .attr("transform", "translate(0," + height + ")")
+      .call(d3.axisBottom(x));
+
+  g.append("g")
+      .attr("class", "axis axis--y")
+      .call(d3.axisLeft(y).ticks(10, "%"));
+
+  var legend = serie.append("g")
+      .attr("class", "legend")
+      .attr("transform", function (d) { var d = d[d.length - 1]; return "translate(" + (x(d.data.Country) + x.bandwidth()) + "," + ((y(d[0]) + y(d[1])) / 2) + ")"; });
+
+  legend.append("line")
+      .attr("x1", -6)
+      .attr("x2", 6)
+      .attr("stroke", "#000");
+
+  legend.append("text")
+      .attr("x", 9)
+      .attr("dy", "0.35em")
+      .attr("fill", "#000")
+      .style("font", "10px sans-serif")
+      .text(function (d) { return d.key; });
+}
+
+//Filters the data so that only the selected countries are left
+function filterCountries(data) {
+  var newdata = data.filter(function (d) {
+    return selectedCountries.indexOf(d.Country) >= 0;
+  });
+  return newdata;
 }

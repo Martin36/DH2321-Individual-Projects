@@ -15,8 +15,6 @@ d3.csv("Data/flare.csv", function (d) {
 }, function (error, classes) {
   if (error) throw error;
 
-  console.log({ children: classes });
-
   var root = d3.hierarchy({ children: classes })
       .sum(function (d) { return d.value; })
       .each(function (d) {

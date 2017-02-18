@@ -19,14 +19,14 @@ var z = d3.scaleOrdinal()
 var stack = d3.stack()
     .offset(d3.stackOffsetExpand);
 
-d3.csv("Data/Feeling_of_happiness2.csv", type, function (error, data) {
+d3.csv("Data/Feeling_of_happiness2.csv", function (error, data) {
   if (error) throw error;
 
   var dataStats = new dataStatistics();
   data = dataStats.addColumns(data, ['Inappropriate response', 'No answer', "Don´t know"]);
 
   //Summarize the last 3 columns to one column
-  //console.log(data);
+  console.log(data);
 
   //data.sort(function (a, b) { return b[data.columns[1]] / b.total - a[data.columns[1]] / a.total; });
 
@@ -43,7 +43,10 @@ d3.csv("Data/Feeling_of_happiness2.csv", type, function (error, data) {
     .data(function (d) { return d; })
     .enter().append("rect")
       .attr("x", function (d) { return x(d.data.Country); })
-      .attr("y", function (d) { return y(d[1]); })
+      .attr("y", function (d) {
+        console.log(y(d[1]));
+        return y(d[1]);
+      })
       .attr("height", function (d) { return y(d[0]) - y(d[1]); })
       .attr("width", x.bandwidth());
 
