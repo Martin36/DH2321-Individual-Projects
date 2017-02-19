@@ -301,20 +301,6 @@ function createBarChart() {
       .attr("width", x1.bandwidth())
       .attr("height", function (d) { return y(d[0][0]) - y(d[0][1]); })
       .attr("fill", function (d) { return z(d.key); });
-/*      
-  var serie = g.selectAll(".serie")
-    .data(stack.keys(data.columns.slice(1))(data))
-    .enter().append("g")
-      .attr("class", "serie")
-      .attr("fill", function (d) { return z(d.key); });
-
-  serie.selectAll("rect")
-    .data(function (d) { return d; })
-    .enter().append("rect")
-      .attr("x", function (d) { return x0(d.data.Country); })
-      .attr("y", function (d) { return y(d[1]); })
-      .attr("height", function (d) { return y(d[0]) - y(d[1]); })
-      .attr("width", x0.bandwidth());
 
   g.append("g")
       .attr("class", "axis axis--x")
@@ -324,7 +310,7 @@ function createBarChart() {
   g.append("g")
       .attr("class", "axis axis--y")
       .call(d3.axisLeft(y).ticks(10, "%"));
-
+/*
   var legend = serie.append("g")
       .attr("class", "legend")
       .attr("transform", function (d) {
