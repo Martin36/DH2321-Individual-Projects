@@ -2,8 +2,11 @@
 var selectedCountries = [];
 var selectedVariables = [];
 //For testing
-//selectedCountries = ["Iraq", "Ghana", "India"];
-//selectedVariables = ["Feeling of happiness", "Important in life: Family", "Satisfaction with your life"];
+var testing = true;
+if (testing) {
+  selectedCountries = ["Iraq", "Ghana", "India"];
+  selectedVariables = ["Feeling of happiness", "Important in life: Family", "Satisfaction with your life"];
+}
 //Array containing the data
 var dataArray = [];
 //Array containing the names of the variables
@@ -205,9 +208,7 @@ function loadData() {
     .defer(d3.csv, "Data/State_of_health_subjective_Wave6.csv")
     .await(function (error, feelings, family, satisfaction, work, firstChoice, trust, successful, health) {
       if (error) { console.log(error); };
-      // console.log(satisfaction)
-      console.log(firstChoice);
-      console.log(feelings);
+
       //Create new objects containing the variables and country
       for(var i = 0; i < feelings.length; i++){
         var countryObj;
@@ -248,7 +249,9 @@ function loadData() {
       }
 
       //For testing
-      //createBarChart();
+      if (testing) {
+        createBarChart();
+      }
 
     });
 
@@ -268,7 +271,7 @@ function createBarChart() {
   for (var i in data) {
     data = filterCountries(data);
   }
- // console.log(data);
+  //console.log(data);
   //Set up the SVG element and append a group
   var svg = d3.select("svg#stackedBarChart"),
       margin = { top: 20, right: 60, bottom: 30, left: 40 },
@@ -294,7 +297,7 @@ function createBarChart() {
   selectedVariables.sort(function (a, b) {
     return (variablesArray.indexOf(a) < variablesArray.indexOf(b)) ? -1 : 1;
   });
-  console.log(selectedVariables);
+
   //Create the color scale
   var z = [];
   for (var i = 0; i < selectedVariables.length; i++) {
@@ -302,19 +305,14 @@ function createBarChart() {
     //Map the colors to each category
     z[selectedVariables[i]].domain(Object.keys(data[0][selectedVariables[i]]));
   }
-  //  var z = d3.scaleOrdinal()
-  //    .range(["#98abc5", "#8a89a6", "#7b6888", "#6b486b", "#a05d56", "#d0743c", "#ff8c00"]);
 
   var stack = d3.stack()
       .offset(d3.stackOffsetExpand);
-
 
   //Map the data for the x-axis (which is the countries)
   x0.domain(data.map(function(d){ return d.country }));
   //This is the domain for the variables in the group
   x1.domain(selectedVariables).rangeRound([0, x0.bandwidth()]);
-  //z.domain(Object.keys(data[0]["Feeling of happiness"]));
-
 
   //Create the groups for holding the grouped bars
   var barGroups = g.append("g")
@@ -322,7 +320,6 @@ function createBarChart() {
     .data(data)
     .enter().append("g").attr("class", "barGroup")
       .attr("transform", function (d) { return "translate(" + x0(d.country) + ",0)"; });
-
 
   //Create the groups representing the bars and holding the stacked rectangles
   var stackedBars = barGroups.selectAll("g")
@@ -339,10 +336,9 @@ function createBarChart() {
         return "translate(" + x1(d.name) + ",0)";
       });
 
-
+  //Create all the stacked rectangles in the bars
   stackedBars.selectAll("rect")
     .data(function (d) {
-    // console.log(d);
       var name = d.name;
       var colorScale = z[name];
       delete d.name;
@@ -357,15 +353,10 @@ function createBarChart() {
     })
     .enter().append("rect")
       .attr("x", 0)
-      .attr("y", function (d) {
-        //console.log(d);
-        return y(d[0][1]);
-      })
+      .attr("y", function (d) { return y(d[0][1]); })
       .attr("width", x1.bandwidth())
       .attr("height", function (d) { return y(d[0][0]) - y(d[0][1]); })
-      .attr("fill", function (d) {
-        return d.color;
-      })
+      .attr("fill", function (d) { return d.color; })
      	.on("mouseover", function (d) {
         //Calculate the part of space that this rectangle takes 
      	  var part = (d[0][1] - d[0][0]);
@@ -375,16 +366,89 @@ function createBarChart() {
 	    .on("mousemove", function () { return tooltip.style("top", (d3.event.pageY - 10) + "px").style("left", (d3.event.pageX + 10) + "px"); })
 	    .on("mouseout", function () { return tooltip.style("visibility", "hidden"); });
 
-
+  //Create the x-axis
   g.append("g")
       .attr("class", "axis axis--x")
       .attr("transform", "translate(0," + height + ")")
       .call(d3.axisBottom(x0));
 
+  //Create the y-axis
   g.append("g")
       .attr("class", "axis axis--y")
       .call(d3.axisLeft(y).ticks(10, "%"));
-/*
+
+  var legendData = [];
+  for (var key in data[0]) {
+    if (selectedVariables.indexOf(key) > -1) {
+      legendData.push(data[0][key]);
+      legendData[legendData.length - 1].name = key;
+    }
+  }
+  var legendWidth = d3.select("svg#legend").attr("width");
+
+  var legendScale = d3.scaleBand()
+    .rangeRound([0, legendWidth])
+    .padding(0.1)
+    .align(0.1);
+
+  legendScale.domain(legendData.map(function (d) {
+    return d.name;
+  }));
+
+  //console.log(legendData);
+  $("svg#legend").empty();
+  //Create the legend in a separte SVG element
+  //First create one group for each element
+  var legend = d3.select("svg#legend").append("g")//.attr("transform", "translate(-500, 0)")
+    .selectAll("g")
+    .data(legendData)
+    .enter().append("g")
+      .attr("font-family", "sans-serif")
+      .attr("font-size", 10)
+      .attr("text-anchor", "end")
+      .attr("transform", function (d, i) { return "translate(" + -i*150 +", 0)"; });
+
+  //Then create a group element for each bar
+  var rows = legend.selectAll("g")
+    .data(function (d) {
+      var colorScale = z[d.name];
+      delete d.name;
+      var keys = Object.keys(d);
+      var newData = [];
+      var dataObj;
+      for (var i = 0; i < keys.length; i++) {
+        dataObj = {
+          name: keys[i],
+          color: colorScale(keys[i])
+        }
+        newData.push(dataObj);
+      }
+//      console.log(newData);
+      return newData;
+    })
+    .enter().append("g")
+      .attr("transform", function (d, i) {
+      //  console.log(d);
+        return "translate(0," + i * 20 + ")";
+      });
+
+
+  rows.append("rect")
+      .attr("x", width - 19)
+      .attr("width", 19)
+      .attr("height", 19)
+      .attr("fill", function (d) {
+   //     console.log(d);
+        return d.color;
+      });
+
+  rows.append("text")
+      .attr("x", width - 24)
+      .attr("y", 9.5)
+      .attr("dy", "0.32em")
+      .text(function (d) { return d.name; });
+
+  /*
   var legend = serie.append("g")
       .attr("class", "legend")
       .attr("transform", function (d) {
