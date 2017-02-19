@@ -188,15 +188,19 @@ function loadData() {
 }
 
 //http://stackoverflow.com/questions/286141/remove-blank-attributes-from-an-object-in-javascript
-//Remove any properties that are empty i.e. ""
+//Remove any properties that are empty i.e. "" (if array it return a new array)
 function clean(obj) {
  
   if (Array.isArray(obj)) {
-    for (var i = 0; i < obj.length; i++) {
-      if (obj[i] === "") {
-        delete obj[i];
+    var end = obj.length;
+    var newArray = [];
+    for (var i = 0; i < end; i++) {
+      if (obj[i]) {
+        newArray.push(obj[i]);
+        //obj.splice(i, 1);
       }
     }
+    return newArray;
   } else {
     for (var propName in obj) {
       if (obj[propName] === "") {
@@ -219,8 +223,8 @@ function createBarChart() {
       height = +svg.attr("height") - margin.top - margin.bottom,
       g = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-  //Create the scaling for the x-axis
-  var x = d3.scaleBand()
+  //Create the scaling for the x-axis (this is the scaleBand for the groupes (the outer one))
+  var x0 = d3.scaleBand()
       .rangeRound([0, width])
       .padding(0.1)
       .align(0.1);
@@ -246,15 +250,15 @@ function createBarChart() {
   //Save the columns array before filtering
   var columns = data.columns;
   //Clean the columns array of all the empty entries
-  clean(columns);
+  columns = clean(columns);
   //Filter the data, so that only the selected countries are left in the set (this function will remove the "columns" array
   data = filterCountries(data);
   //Re-add the columns array to the dataset 
   data.columns = columns;
 
-  console.log(columns);
+  console.log(data.columns);
 
-  x.domain(data.map(function (d) { return d.Country; }));
+  x0.domain(data.map(function (d) { return d.Country; }));
   z.domain(data.columns.slice(1));
 
   var serie = g.selectAll(".serie")
@@ -266,15 +270,15 @@ function createBarChart() {
   serie.selectAll("rect")
     .data(function (d) { return d; })
     .enter().append("rect")
-      .attr("x", function (d) { return x(d.data.Country); })
+      .attr("x", function (d) { return x0(d.data.Country); })
       .attr("y", function (d) { return y(d[1]); })
       .attr("height", function (d) { return y(d[0]) - y(d[1]); })
-      .attr("width", x.bandwidth());
+      .attr("width", x0.bandwidth());
 
   g.append("g")
       .attr("class", "axis axis--x")
       .attr("transform", "translate(0," + height + ")")
-      .call(d3.axisBottom(x));
+      .call(d3.axisBottom(x0));
 
   g.append("g")
       .attr("class", "axis axis--y")
@@ -282,7 +286,7 @@ function createBarChart() {
 
   var legend = serie.append("g")
       .attr("class", "legend")
-      .attr("transform", function (d) { var d = d[d.length - 1]; return "translate(" + (x(d.data.Country) + x.bandwidth()) + "," + ((y(d[0]) + y(d[1])) / 2) + ")"; });
+      .attr("transform", function (d) { var d = d[d.length - 1]; return "translate(" + (x0(d.data.Country) + x0.bandwidth()) + "," + ((y(d[0]) + y(d[1])) / 2) + ")"; });
 
   legend.append("line")
       .attr("x1", -6)
@@ -296,6 +300,7 @@ function createBarChart() {
       .style("font", "10px sans-serif")
       .text(function (d) { return d.key; });
 }
+
 
 //Filters the data so that only the selected countries are left
 function filterCountries(data) {
