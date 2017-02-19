@@ -1,6 +1,9 @@
 ﻿//Arrays to hold selections
 var selectedCountries = [];
 var selectedVariables = [];
+//For testing
+selectedCountries = ["Iraq", "Ghana", "India"];
+selectedVariables = ["Satisfaction with your life"];
 //Array containing the data
 var dataArray = [];
 //Array containing the names of the variables
@@ -15,6 +18,7 @@ createCountryBubbles();
 createListOfVariables();
 
 loadData();
+
 
 //Function for creating the grouped bubbles chart with the countries
 function createCountryBubbles() {
@@ -163,7 +167,7 @@ function createListOfVariables() {
 function loadData() {
 
   d3.queue()
-    .defer(d3.csv, "Data/Feeling_of_happiness_average.csv")
+    .defer(d3.csv, "Data/Feeling_of_happiness_Wave6.csv")
     .defer(d3.csv, "Data/Important_in_life_Family_Wave6.csv")
     .defer(d3.csv, "Data/Satisfaction_with_your_life_Wave6.csv")
     .await(function (error, feelings, family, satisfaction) {
@@ -183,31 +187,12 @@ function loadData() {
       dataArray[variablesArray[0]] = feelings;
       dataArray[variablesArray[1]] = family;
       dataArray[variablesArray[2]] = satisfaction;
-      
-    })
-}
+      //For testing
+      createBarChart();
 
-//http://stackoverflow.com/questions/286141/remove-blank-attributes-from-an-object-in-javascript
-//Remove any properties that are empty i.e. "" (if array it return a new array)
-function clean(obj) {
- 
-  if (Array.isArray(obj)) {
-    var end = obj.length;
-    var newArray = [];
-    for (var i = 0; i < end; i++) {
-      if (obj[i]) {
-        newArray.push(obj[i]);
-        //obj.splice(i, 1);
-      }
-    }
-    return newArray;
-  } else {
-    for (var propName in obj) {
-      if (obj[propName] === "") {
-        delete obj[propName];
-      }
-    }
-  }
+    });
+
+
 }
 
 //https://bl.ocks.org/mbostock/3886394
@@ -225,13 +210,17 @@ function createBarChart() {
 
   //Create the scaling for the x-axis (this is the scaleBand for the groupes (the outer one))
   var x0 = d3.scaleBand()
-      .rangeRound([0, width])
-      .padding(0.1)
-      .align(0.1);
+    .rangeRound([0, width])
+    .padding(0.1)
+    .align(0.1);
+
+  //Scaling for inside the group
+  var x1 = d3.scaleBand()
+    .padding(0.05);
 
   //Create the scaling for the y-axis
   var y = d3.scaleLinear()
-      .rangeRound([height, 0]);
+    .rangeRound([height, 0]);
 
   //Create the color scale
   var z = d3.scaleOrdinal()
@@ -239,27 +228,44 @@ function createBarChart() {
 
   var stack = d3.stack()
       .offset(d3.stackOffsetExpand);
-  //TODO: This needs to be modified so that the user can select multiple variables to show
-  var data = dataArray[selectedVariables[0]];
-  //Remove "average" from data
-  for (var i = 0; i < data.length; i++) {
-    delete data[i].Average;
+  //The data that is to be used
+  var data = dataArray;
+  console.log(data);
+  //Filter countries
+  for (var i in data) {
+    data[i] = filterCountries(data[i]);
   }
-  //And also from the columns
-  data.columns.splice(data.columns.indexOf("Average"), 1);
-  //Save the columns array before filtering
-  var columns = data.columns;
-  //Clean the columns array of all the empty entries
-  columns = clean(columns);
-  //Filter the data, so that only the selected countries are left in the set (this function will remove the "columns" array
-  data = filterCountries(data);
-  //Re-add the columns array to the dataset 
-  data.columns = columns;
+  console.log(data);
 
-  console.log(data.columns);
-
+  //Map the data for the x-axis (which is the countries)
   x0.domain(data.map(function (d) { return d.Country; }));
+  //This is the domain for the variables in the group
+  x1.domain(selectedVariables).rangeRound([0, x0.bandwidth()]);
+  //Map the colors to each category
+  //TODO: Create multiple color sets for different variables
   z.domain(data.columns.slice(1));
+  //Keys becomes all the columns except the first one
+
+
+  //Create the groups for holding the grouped bars
+  var barGroups = g.append("g")
+    .selectAll("g")
+    .data(data)
+    .enter().append("g")
+      .attr("transform", function (d) { return "translate(" + x0(d.Country) + ",0)"; });
+  
+  //Create the bars in the bar groups
+  barGroups.selectAll("g")
+    .data(data)
+    .enter().append("rect")
+      .attr("x", function (d) { return x1(d.key); })
+      .attr("y", function (d) { return y(d.value); })
+      .attr("width", x1.bandwidth())
+      .attr("height", function (d) { return height - y(d.value); })
+      .attr("fill", function (d) { return z(d.key); });
+
+
+
 
   var serie = g.selectAll(".serie")
     .data(stack.keys(data.columns.slice(1))(data))
@@ -286,7 +292,10 @@ function createBarChart() {
 
   var legend = serie.append("g")
       .attr("class", "legend")
-      .attr("transform", function (d) { var d = d[d.length - 1]; return "translate(" + (x0(d.data.Country) + x0.bandwidth()) + "," + ((y(d[0]) + y(d[1])) / 2) + ")"; });
+      .attr("transform", function (d) {
+        var d = d[d.length - 1];
+        return "translate(" + (x0(d.data.Country) + x0.bandwidth()) + "," + ((y(d[0]) + y(d[1])) / 2) + ")";
+      });
 
   legend.append("line")
       .attr("x1", -6)
@@ -304,8 +313,62 @@ function createBarChart() {
 
 //Filters the data so that only the selected countries are left
 function filterCountries(data) {
-  var newdata = data.filter(function (d) {
+  //Save the columns
+  var columns = data.columns;
+  var newData = data.filter(function (d) {
     return selectedCountries.indexOf(d.Country) >= 0;
   });
-  return newdata;
+  newData.columns = columns;
+  return newData;
+}
+
+//Function for cleaning the data
+function cleanData(data) {
+  var newData = [];
+  //Loop through the arrays in the data
+  for (array in data) {
+    //Loop through each element in the array
+    for (var i = 0; i < data[array].length; i++) {
+      if (!Array.isArray(data[array][i])) {
+        clean(data[array][i], ["Average"]);
+      } else {    //Handle the case of column seperatly
+        data[array].columns = clean(data[array].columns);
+      }
+    }
+  }
+}
+
+//http://stackoverflow.com/questions/281264/remove-empty-elements-from-an-array-in-javascript
+//http://stackoverflow.com/questions/286141/remove-blank-attributes-from-an-object-in-javascript
+// Will remove all falsy values: undefined, null, 0, false, NaN and "" (empty string)
+//The properties array is a list of additional properties to remove
+function clean(obj, properties) {
+
+  if (Array.isArray(obj)) {
+    var end = obj.length;
+    var newArray = [];
+    for (var i = 0; i < end; i++) {
+      if (obj[i]) {
+        newArray.push(obj[i]);
+      }
+    }
+    return newArray;
+  } else {
+    var newObj;
+    for (var propName in obj) {
+      if (obj[propName] === "") {
+        delete obj[propName];
+      }
+    }
+    //If some additional parameters has been specified those should also be removed
+    if (properties) {
+      for (var propName in properties) {
+        if (obj[propName] === properties[propName]) {
+          delete obj[propName];
+        }
+      }
+    }
+    newObj = obj;
+    return newObj;
+  }
 }
