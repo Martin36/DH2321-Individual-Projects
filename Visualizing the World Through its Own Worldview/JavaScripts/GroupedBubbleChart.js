@@ -3,7 +3,7 @@ var selectedCountries = [];
 var selectedVariables = [];
 //For testing
 selectedCountries = ["Iraq", "Ghana", "India"];
-selectedVariables = ["Satisfaction with your life"];
+selectedVariables = ["Feeling of happiness", "Important in life: Family", "Satisfaction with your life"];
 //Array containing the data
 var dataArray = [];
 //Array containing the names of the variables
@@ -229,22 +229,31 @@ function createBarChart() {
   var stack = d3.stack()
       .offset(d3.stackOffsetExpand);
   //The data that is to be used
-  var data = dataArray;
-  console.log(data);
+  var data = [];
+  for(var variable in selectedVariables){
+    data.push(dataArray[selectedVariables[variable]]);
+  }
   //Filter countries
   for (var i in data) {
     data[i] = filterCountries(data[i]);
   }
+  //Add array of countries to data
+  data.countries = selectedCountries;
+  //Add names for the arrays
+  for (var i = 0; i < selectedVariables.length; i++) {
+    data[i].name = selectedVariables[i];
+  }
+  //Add the variables to the countries
+  
   console.log(data);
 
   //Map the data for the x-axis (which is the countries)
-  x0.domain(data.map(function (d) { return d.Country; }));
+  x0.domain(data.countries);
   //This is the domain for the variables in the group
   x1.domain(selectedVariables).rangeRound([0, x0.bandwidth()]);
   //Map the colors to each category
   //TODO: Create multiple color sets for different variables
   z.domain(data.columns.slice(1));
-  //Keys becomes all the columns except the first one
 
 
   //Create the groups for holding the grouped bars
@@ -254,19 +263,21 @@ function createBarChart() {
     .enter().append("g")
       .attr("transform", function (d) { return "translate(" + x0(d.Country) + ",0)"; });
   
-  //Create the bars in the bar groups
-  barGroups.selectAll("g")
+  //Create the groups representing the bars and holding the stacked rectangles
+  var stackedBars = barGroups.selectAll("g")
     .data(data)
+    .enter().append("g")
+      .attr("transform", function (d) { return "translate(" + x0() + ",0)"; });
+
+
+/*
     .enter().append("rect")
       .attr("x", function (d) { return x1(d.key); })
       .attr("y", function (d) { return y(d.value); })
       .attr("width", x1.bandwidth())
       .attr("height", function (d) { return height - y(d.value); })
       .attr("fill", function (d) { return z(d.key); });
-
-
-
-
+      */
   var serie = g.selectAll(".serie")
     .data(stack.keys(data.columns.slice(1))(data))
     .enter().append("g")
