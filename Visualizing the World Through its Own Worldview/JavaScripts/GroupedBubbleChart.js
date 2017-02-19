@@ -173,20 +173,25 @@ function loadData() {
     .await(function (error, feelings, family, satisfaction) {
       if (error) { console.log(error); };
 
-      //Remove any empty properties of the objects
-      for (var i = 0; i < feelings.length; i++) {
-        clean(feelings[i]);
-      }
-      for (var i = 0; i < family.length; i++) {
-        clean(family[i]);
-      }
-      for (var i = 0; i < satisfaction.length; i++) {
-        clean(satisfaction[i]);
+      //Create new objects containing the variables and country
+      for(var i = 0; i < feelings.length; i++){
+        var countryObj;
+        var country = feelings[i].Country
+        var feelingsObj = feelings[i];
+        delete feelingsObj.Country;
+        var familyObj = family[i];
+        delete familyObj.Country;
+        var satisfactionObj = satisfaction[i];
+        delete satisfactionObj.Country;
+        countryObj = {
+          "country": country,
+          "Feeling of happiness": feelingsObj,
+          "Important in life: Family": familyObj,
+          "Satisfaction with your life": satisfactionObj
+        }
+        dataArray.push(countryObj);
       }
 
-      dataArray[variablesArray[0]] = feelings;
-      dataArray[variablesArray[1]] = family;
-      dataArray[variablesArray[2]] = satisfaction;
       //For testing
       createBarChart();
 
@@ -228,27 +233,18 @@ function createBarChart() {
 
   var stack = d3.stack()
       .offset(d3.stackOffsetExpand);
+
   //The data that is to be used
-  var data = [];
-  for(var variable in selectedVariables){
-    data.push(dataArray[selectedVariables[variable]]);
-  }
+  var data = dataArray;
+
   //Filter countries
   for (var i in data) {
-    data[i] = filterCountries(data[i]);
+    data = filterCountries(data);
   }
-  //Add array of countries to data
-  data.countries = selectedCountries;
-  //Add names for the arrays
-  for (var i = 0; i < selectedVariables.length; i++) {
-    data[i].name = selectedVariables[i];
-  }
-  //Add the variables to the countries
-  
   console.log(data);
 
   //Map the data for the x-axis (which is the countries)
-  x0.domain(data.countries);
+  x0.domain(data.map(function(d){ return d.country }));
   //This is the domain for the variables in the group
   x1.domain(selectedVariables).rangeRound([0, x0.bandwidth()]);
   //Map the colors to each category
@@ -324,12 +320,10 @@ function createBarChart() {
 
 //Filters the data so that only the selected countries are left
 function filterCountries(data) {
-  //Save the columns
-  var columns = data.columns;
   var newData = data.filter(function (d) {
-    return selectedCountries.indexOf(d.Country) >= 0;
+    return selectedCountries.indexOf(d.country) >= 0;
   });
-  newData.columns = columns;
+//  newData.columns = columns;
   return newData;
 }
 
