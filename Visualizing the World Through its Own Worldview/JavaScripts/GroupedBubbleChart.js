@@ -12,6 +12,29 @@ var variablesArray = [
   "Important in life: Family",
   "Satisfaction with your life"
 ];
+//http://bl.ocks.org/biovisualize/1016860
+//Popup to show on hover for the barchart
+var tooltip = d3.select("body")
+	.append("div")
+	.style("position", "absolute")
+	.style("z-index", "10")
+	.style("visibility", "hidden")
+	.text("a simple tooltip");
+
+var percentFormat = d3.format(".1%");
+
+//Color scales
+//From: http://colorbrewer2.org/#type=sequential&scheme=YlOrBr&n=9
+var colorScales = [];
+var z = d3.scaleOrdinal();
+colorScales.push(d3.scaleOrdinal().range(['#f7fcfd', '#e5f5f9', '#ccece6', '#99d8c9', '#66c2a4', '#41ae76', '#238b45', '#006d2c', '#00441b'].reverse()))
+colorScales.push(d3.scaleOrdinal().range(['#f7fcfd', '#e0ecf4', '#bfd3e6', '#9ebcda', '#8c96c6', '#8c6bb1', '#88419d', '#810f7c', '#4d004b'].reverse()))
+colorScales.push(d3.scaleOrdinal().range(['#f7fcf0', '#e0ecf4', '#e0f3db', '#ccebc5', '#a8ddb5', '#7bccc4', '#4eb3d3', '#2b8cbe', '#0868ac', '#084081'].reverse()))
+colorScales.push(d3.scaleOrdinal().range(['#fff7ec', '#fee8c8', '#fdd49e', '#fdbb84', '#fc8d59', '#ef6548', '#d7301f', '#b30000', '#7f0000']))
+colorScales.push(d3.scaleOrdinal().range(['#fff7fb', '#ece7f2', '#d0d1e6', '#a6bddb', '#74a9cf', '#3690c0', '#0570b0', '#045a8d', '#023858']))
+colorScales.push(d3.scaleOrdinal().range(['#fff7fb', '#ece2f0', '#d0d1e6', '#a6bddb', '#67a9cf', '#3690c0', '#02818a', '#016c59', '#014636']))
+colorScales.push(d3.scaleOrdinal().range(['#f7f4f9', '#e7e1ef', '#d4b9da', '#c994c7', '#df65b0', '#e7298a', '#ce1256', '#980043', '#67001f']))
+colorScales.push(d3.scaleOrdinal().range(['#ffffe5', '#fff7bc', '#fee391', '#fec44f', '#fe9929', '#ec7014', '#cc4c02', '#993404', '#662506']))
 
 createCountryBubbles();
 
@@ -172,7 +195,7 @@ function loadData() {
     .defer(d3.csv, "Data/Satisfaction_with_your_life_Wave6.csv")
     .await(function (error, feelings, family, satisfaction) {
       if (error) { console.log(error); };
-
+     // console.log(satisfaction)
       //Create new objects containing the variables and country
       for(var i = 0; i < feelings.length; i++){
         var countryObj;
@@ -213,7 +236,7 @@ function createBarChart() {
   for (var i in data) {
     data = filterCountries(data);
   }
-
+  console.log(data);
   //Set up the SVG element and append a group
   var svg = d3.select("svg#stackedBarChart"),
       margin = { top: 20, right: 60, bottom: 30, left: 40 },
@@ -236,8 +259,14 @@ function createBarChart() {
     .rangeRound([height, 0]);
 
   //Create the color scale
-  var z = d3.scaleOrdinal()
-      .range(["#98abc5", "#8a89a6", "#7b6888", "#6b486b", "#a05d56", "#d0743c", "#ff8c00"]);
+  var z = [];
+  for (var i = 0; i < selectedVariables.length; i++) {
+    z[selectedVariables[i]] = colorScales[i];
+    //Map the colors to each category
+    z[selectedVariables[i]].domain(Object.keys(data[0][selectedVariables[i]]));
+  }
+  //  var z = d3.scaleOrdinal()
+  //    .range(["#98abc5", "#8a89a6", "#7b6888", "#6b486b", "#a05d56", "#d0743c", "#ff8c00"]);
 
   var stack = d3.stack()
       .offset(d3.stackOffsetExpand);
@@ -247,9 +276,7 @@ function createBarChart() {
   x0.domain(data.map(function(d){ return d.country }));
   //This is the domain for the variables in the group
   x1.domain(selectedVariables).rangeRound([0, x0.bandwidth()]);
-  //Map the colors to each category
-  //TODO: Create multiple color sets for different variables
-  z.domain(Object.keys(data[0]["Feeling of happiness"]));
+  //z.domain(Object.keys(data[0]["Feeling of happiness"]));
 
 
   //Create the groups for holding the grouped bars
@@ -259,17 +286,6 @@ function createBarChart() {
     .enter().append("g").attr("class", "barGroup")
       .attr("transform", function (d) { return "translate(" + x0(d.country) + ",0)"; });
 
-  //Creates the keys in the stack which is the different answers of the question
-  //We need one stack for each variable
-  var stackArray = [];
-  var stackedData = [];
-  for (var i = 0; i < selectedVariables.length; i++) {
-    stackArray.push(stack.keys(Object.keys(data[0][selectedVariables[i]])));
-//    console.log(stackArray[i](data.map(function (d) { return d[selectedVariables[i]]; })));
-    stackedData.push(stackArray[i](data.map(function (d) { return d[selectedVariables[i]]; })))
-    stackedData[i].name = selectedVariables[i];
-  }
-//  console.log(stackedData);
 
   //Create the groups representing the bars and holding the stacked rectangles
   var stackedBars = barGroups.selectAll("g")
@@ -288,19 +304,40 @@ function createBarChart() {
 
 
   stackedBars.selectAll("rect")
-    .data(function (d, i) {
+    .data(function (d) {
+    // console.log(d);
+      var name = d.name;
+      var colorScale = z[name];
       delete d.name;
       var keys = Object.keys(d);
       var tempStack = stack.keys(keys);
       var newData = tempStack([d]);
+      //Set color for each element in new data
+      for (var i = 0; i < newData.length; i++) {
+        newData[i].color = colorScale(newData[i].key);
+      }
       return newData;
     })
     .enter().append("rect")
       .attr("x", 0)
-      .attr("y", function (d) { return y(d[0][1]); })
+      .attr("y", function (d) {
+        //console.log(d);
+        return y(d[0][1]);
+      })
       .attr("width", x1.bandwidth())
       .attr("height", function (d) { return y(d[0][0]) - y(d[0][1]); })
-      .attr("fill", function (d) { return z(d.key); });
+      .attr("fill", function (d) {
+        return d.color;
+      })
+     	.on("mouseover", function (d) {
+        //Calculate the part of space that this rectangle takes 
+     	  var part = (d[0][1] - d[0][0]);
+     	  tooltip.text(d.key + ": " + percentFormat(part));
+     	  return tooltip.style("visibility", "visible");
+     	})
+	    .on("mousemove", function () { return tooltip.style("top", (d3.event.pageY - 10) + "px").style("left", (d3.event.pageX + 10) + "px"); })
+	    .on("mouseout", function () { return tooltip.style("visibility", "hidden"); });
+
 
   g.append("g")
       .attr("class", "axis axis--x")
