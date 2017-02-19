@@ -206,6 +206,14 @@ function createBarChart() {
   //Clear the SVG if there already exists a var chart
   $("svg#stackedBarChart").empty();
 
+  //The data that is to be used
+  var data = dataArray;
+
+  //Filter countries
+  for (var i in data) {
+    data = filterCountries(data);
+  }
+
   //Set up the SVG element and append a group
   var svg = d3.select("svg#stackedBarChart"),
       margin = { top: 20, right: 60, bottom: 30, left: 40 },
@@ -234,14 +242,6 @@ function createBarChart() {
   var stack = d3.stack()
       .offset(d3.stackOffsetExpand);
 
-  //The data that is to be used
-  var data = dataArray;
-
-  //Filter countries
-  for (var i in data) {
-    data = filterCountries(data);
-  }
-  console.log(data);
 
   //Map the data for the x-axis (which is the countries)
   x0.domain(data.map(function(d){ return d.country }));
@@ -249,31 +249,59 @@ function createBarChart() {
   x1.domain(selectedVariables).rangeRound([0, x0.bandwidth()]);
   //Map the colors to each category
   //TODO: Create multiple color sets for different variables
-  z.domain(data.columns.slice(1));
+  z.domain(Object.keys(data[0]["Feeling of happiness"]));
 
 
   //Create the groups for holding the grouped bars
   var barGroups = g.append("g")
     .selectAll("g")
     .data(data)
-    .enter().append("g")
-      .attr("transform", function (d) { return "translate(" + x0(d.Country) + ",0)"; });
-  
+    .enter().append("g").attr("class", "barGroup")
+      .attr("transform", function (d) { return "translate(" + x0(d.country) + ",0)"; });
+
+  //Creates the keys in the stack which is the different answers of the question
+  //We need one stack for each variable
+  var stackArray = [];
+  var stackedData = [];
+  for (var i = 0; i < selectedVariables.length; i++) {
+    stackArray.push(stack.keys(Object.keys(data[0][selectedVariables[i]])));
+//    console.log(stackArray[i](data.map(function (d) { return d[selectedVariables[i]]; })));
+    stackedData.push(stackArray[i](data.map(function (d) { return d[selectedVariables[i]]; })))
+    stackedData[i].name = selectedVariables[i];
+  }
+//  console.log(stackedData);
+
   //Create the groups representing the bars and holding the stacked rectangles
   var stackedBars = barGroups.selectAll("g")
-    .data(data)
-    .enter().append("g")
-      .attr("transform", function (d) { return "translate(" + x0() + ",0)"; });
+    .data(function (d) {
+      var newData = [];
+      for (var i = 0; i < selectedVariables.length; i++) {
+        newData.push(d[selectedVariables[i]]);
+        newData[i].name = selectedVariables[i];
+      }
+      return newData;
+    })
+    .enter().append("g").attr("class", "stackedBar")
+      .attr("transform", function (d) {
+        return "translate(" + x1(d.name) + ",0)";
+      });
 
 
-/*
+  stackedBars.selectAll("rect")
+    .data(function (d, i) {
+      delete d.name;
+      var keys = Object.keys(d);
+      var tempStack = stack.keys(keys);
+      var newData = tempStack([d]);
+      return newData;
+    })
     .enter().append("rect")
-      .attr("x", function (d) { return x1(d.key); })
-      .attr("y", function (d) { return y(d.value); })
+      .attr("x", 0)
+      .attr("y", function (d) { return y(d[0][1]); })
       .attr("width", x1.bandwidth())
-      .attr("height", function (d) { return height - y(d.value); })
+      .attr("height", function (d) { return y(d[0][0]) - y(d[0][1]); })
       .attr("fill", function (d) { return z(d.key); });
-      */
+/*      
   var serie = g.selectAll(".serie")
     .data(stack.keys(data.columns.slice(1))(data))
     .enter().append("g")
@@ -315,6 +343,7 @@ function createBarChart() {
       .attr("fill", "#000")
       .style("font", "10px sans-serif")
       .text(function (d) { return d.key; });
+      */
 }
 
 

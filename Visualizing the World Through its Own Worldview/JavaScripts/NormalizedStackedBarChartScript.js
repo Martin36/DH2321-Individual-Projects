@@ -33,6 +33,7 @@ d3.csv("Data/Feeling_of_happiness2.csv", function (error, data) {
   x.domain(data.map(function (d) { return d.Country; }));
   z.domain(data.columns.slice(1));
 
+  console.log(stack.keys(data.columns.slice(1))(data));
   var serie = g.selectAll(".serie")
     .data(stack.keys(data.columns.slice(1))(data))
     .enter().append("g")
@@ -40,7 +41,10 @@ d3.csv("Data/Feeling_of_happiness2.csv", function (error, data) {
       .attr("fill", function (d) { return z(d.key); });
 
   serie.selectAll("rect")
-    .data(function (d) { return d; })
+    .data(function (d) {
+      console.log(d);
+      return d;
+    })
     .enter().append("rect")
       .attr("x", function (d) { return x(d.data.Country); })
       .attr("y", function (d) {
