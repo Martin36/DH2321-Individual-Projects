@@ -248,7 +248,7 @@ function loadData() {
       }
 
       //For testing
-      createBarChart();
+      //createBarChart();
 
     });
 
@@ -268,7 +268,7 @@ function createBarChart() {
   for (var i in data) {
     data = filterCountries(data);
   }
-  console.log(data);
+ // console.log(data);
   //Set up the SVG element and append a group
   var svg = d3.select("svg#stackedBarChart"),
       margin = { top: 20, right: 60, bottom: 30, left: 40 },
@@ -290,10 +290,15 @@ function createBarChart() {
   var y = d3.scaleLinear()
     .rangeRound([height, 0]);
 
+  //Sort the selectedVariables accoring to the variablesArray
+  selectedVariables.sort(function (a, b) {
+    return (variablesArray.indexOf(a) < variablesArray.indexOf(b)) ? -1 : 1;
+  });
+  console.log(selectedVariables);
   //Create the color scale
   var z = [];
   for (var i = 0; i < selectedVariables.length; i++) {
-    z[selectedVariables[i]] = colorScales[i];
+    z[selectedVariables[i]] = colorScales[variablesArray.indexOf(selectedVariables[i])];
     //Map the colors to each category
     z[selectedVariables[i]].domain(Object.keys(data[0][selectedVariables[i]]));
   }
