@@ -205,43 +205,7 @@ function loadData() {
       .defer(d3.csv, "Data/Most_people_can_be_trusted_Wave6.csv")
       .defer(d3.csv, "Data/Being_very_successful_Wave6.csv")
       .defer(d3.csv, "Data/State_of_health_subjective_Wave6.csv")
-      .await(function (error, feelings, family, satisfaction, work, firstChoice, trust, successful, health) {
-        if (error) { console.log(error); };
-
-        var allCategories = [feelings, family, satisfaction, work, firstChoice, trust, successful, health];
-        //Finds the length of the largest array
-        var maxLenght = Math.max(...allCategories.map(function(d) {return d.length})); //The ... syntax takes the elements in the array and places them as arguments to the function
-
-        //Create new objects containing the variables and country
-        for (var i = 0; i < maxLenght; i++) {
-          var countryObj = {};
-          countryObj.country = allCategories[0][i].Country;
-          //Add country to countries array if it is not alreay in there
-          if (countries.indexOf(countryObj.country) < 0) {
-            countries.push(countryObj.country);
-          }
-          for (var j = 0; j < allCategories.length; j++) {
-            //Array of the current category
-            var currentCategory = allCategories[j];
-            //Go through the objects in the current category the find the one that belongs to the current country
-            for (var k = 0; k < currentCategory.length; k++) {
-              if (currentCategory[k].Country == countryObj.country) {
-                //Remove the Country property
-                delete currentCategory[k].Country;
-                //Add the data to the country object
-                countryObj[variablesArray[j]] = currentCategory[k];
-              }
-            }
-          }
-          dataArray.push(countryObj);
-        }
-        //  console.log(countries);
-
-        //For testing
-        if (testing) {
-          createBarChart();
-        }
-      });
+      .await(fixData);
     }
 
   if (selectedWave == 5) {
@@ -254,47 +218,51 @@ function loadData() {
       .defer(d3.csv, "Data/Most_people_can_be_trusted_Wave5.csv")
       .defer(d3.csv, "Data/Being_very_successful_Wave5.csv")
       .defer(d3.csv, "Data/State_of_health_subjective_Wave5.csv")
-      .await(function (error, feelings, family, satisfaction, work, firstChoice, trust, successful, health) {
-        if (error) { console.log(error); };
-
-        var allCategories = [feelings, family, satisfaction, work, firstChoice, trust, successful, health];
-        //Finds the length of the largest array
-        var maxLenght = Math.max(...allCategories.map(function(d) {return d.length})); //The ... syntax takes the elements in the array and places them as arguments to the function
-          
-        //Create new objects containing the variables and country
-        for (var i = 0; i < maxLenght; i++) {
-          var countryObj = {};
-          countryObj.country = allCategories[0][i].Country;
-          //Add country to countries array if it is not alreay in there
-          if (countries.indexOf(countryObj.country) < 0) {
-            countries.push(countryObj.country);
-          }
-          for (var j = 0; j < allCategories.length; j++) {
-            //Array of the current category
-            var currentCategory = allCategories[j];
-            //Go through the objects in the current category the find the one that belongs to the current country
-            for(var k = 0; k < currentCategory.length; k++){
-              if (currentCategory[k].Country == countryObj.country) {
-                //Remove the Country property
-                delete currentCategory[k].Country;
-                //Add the data to the country object
-                countryObj[variablesArray[j]] = currentCategory[k];
-              }
-            }
-          }
-          dataArray.push(countryObj);
-        }
-      //  console.log(countries);
-
-        //For testing
-        if (testing) {
-          createBarChart();
-        }
-      });
+      .await(fixData);
   }
 
 
+
+
 }
+
+function fixData(error, feelings, family, satisfaction, work, firstChoice, trust, successful, health) {
+  if (error) { console.log(error); };
+
+  var allCategories = [feelings, family, satisfaction, work, firstChoice, trust, successful, health];
+  //Finds the length of the largest array
+  var maxLenght = Math.max(...allCategories.map(function(d) {return d.length})); //The ... syntax takes the elements in the array and places them as arguments to the function
+
+  //Create new objects containing the variables and country
+  for (var i = 0; i < maxLenght; i++) {
+    var countryObj = {};
+    countryObj.country = allCategories[0][i].Country;
+    //Add country to countries array if it is not alreay in there
+    if (countries.indexOf(countryObj.country) < 0) {
+      countries.push(countryObj.country);
+    }
+    for (var j = 0; j < allCategories.length; j++) {
+      //Array of the current category
+      var currentCategory = allCategories[j];
+      //Go through the objects in the current category the find the one that belongs to the current country
+      for (var k = 0; k < currentCategory.length; k++) {
+        if (currentCategory[k].Country == countryObj.country) {
+          //Remove the Country property
+          delete currentCategory[k].Country;
+          //Add the data to the country object
+          countryObj[variablesArray[j]] = currentCategory[k];
+        }
+      }
+    }
+    dataArray.push(countryObj);
+  }
+  //  console.log(countries);
+
+  //For testing
+  if (testing) {
+    createBarChart();
+  }
+};
 
 //https://bl.ocks.org/mbostock/3886394
 //Function for creating the stacked bar chart with the previously specified variables and countries
