@@ -14,11 +14,24 @@
 <body style="background-color: grey">
   <div class="header">
     <h1>Select which countries you want to compare</h1>
-    <h2>
-      The size represents the GDP per capita for each country
+    <h2 >
+      The size represents the <span id="gapminderMapping">GDP per capita</span> for each country
     </h2>
   </div>
   <svg id="countriesGrouped" width="1200" height="800"></svg>
+  <div class="header">
+    <h1>Select with variable should be mapped to the size of the bubbles</h1>
+  </div>
+  <div class="gapDataContainer">
+    <button id="gdpButton" class="waveButton">GDP Per Capita</button>
+    <button id="alcoholButton" class="waveButton">Alcohol Consumption</button>
+    <button id="bmiFemaleButton" class="waveButton">BMI Female</button>
+    <button id="bmiMaleButton" class="waveButton">BMI Male</button>
+    <button id="healthButton" class="waveButton">Health Spending</button>
+    <button id="suicideButton" class="waveButton">Suicide</button>
+    <button id="warButton" class="waveButton">War Mortality</button>
+  </div>
+
   <div class="header">
     <h1>Select which variables to compare the countries by</h1>
   </div>

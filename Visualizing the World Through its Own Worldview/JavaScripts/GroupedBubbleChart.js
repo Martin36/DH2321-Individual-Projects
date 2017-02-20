@@ -13,6 +13,7 @@ if (testing) {
 var dataArray = [];
 //var dataArray6 = [];
 var countries = [];
+//Containing the countries with their data from Gapminder
 var countryObjects = [];
 //Variable for checking if gapminder data is loaded
 var gapminderLoaded = false;
@@ -27,6 +28,17 @@ var variablesArray = [
   "Being very successful is important to me",
   "State of health subjective"
 ];
+var gapminderDataVariables = [
+  "GDP per capita",
+  "Indicator alcohol consumption",
+  "Indicator BMI female",
+  "Indicator BMI male",
+  "Indicator health spending",
+  "Suicide indicator",
+  "War mortality"
+];
+var selectedGapminderVariable = "Indicator alcohol consumption";
+
 //http://bl.ocks.org/biovisualize/1016860
 //Popup to show on hover for the barchart
 var tooltip = d3.select("body")
@@ -240,25 +252,49 @@ function fixData(error, feelings, family, satisfaction, work, firstChoice, trust
 function loadGapminderData() {
   d3.queue()
     .defer(d3.csv, "Data/Gapminder_gdp_per_capita.csv")
-    .await(function (error, data) {
+    .defer(d3.csv, "Data/Gapminder_indicator_alcohol_consumption.csv")
+    .defer(d3.csv, "Data/Gapminder_indicator_BMI_female.csv")
+    .defer(d3.csv, "Data/Gapminder_indicator_BMI_male.csv")
+    .defer(d3.csv, "Data/Gapminder_indicator_health_spending.csv")
+    .defer(d3.csv, "Data/Gapminder_suicide_indicator.csv")
+    .defer(d3.csv, "Data/Gapminder_war_mortality.csv")
+    .await(function (error, cat1, cat2, cat3, cat4, cat5, cat6, cat7) {
+
+      var allCategories = [cat1, cat2, cat3, cat4, cat5, cat6, cat7];
+      //Finds the length of the largest array
+      var maxLenght = Math.max(...allCategories.map(function(d) {return d.length})); //The ... syntax takes the elements in the array and places them as arguments to the function
+
       //Create objects containing the data
-      for (var i = 0; i < data.length; i++) {
-        
+      for (var i = 0; i < maxLenght; i++) {
+        var countryObject = {};
+        countryObject.country = allCategories[0][i].Country;
        // var index = countries.indexOf(data[i].Country);
-        var waveObj = {
-          wave3: data[i].Wave3,
-          wave4: data[i].Wave4,
-          wave5: data[i].Wave5,
-          wave6: data[i].Wave6
-        };
-        var countryObject = {
-          country: data[i].Country,
-          gdp: waveObj
-        };
+        for (var j = 0; j < allCategories.length; j++) {
+          //Array of the current category
+          var currentCategory = allCategories[j];
+          //Go through the objects in the current category the find the one that belongs to the current country
+          for (var k = 0; k < currentCategory.length; k++) {
+            if (currentCategory[k].Country == countryObject.country) {
+              var waveObj = {
+                name : gapminderDataVariables[j],
+                wave3: currentCategory[k].Wave3,
+                wave4: currentCategory[k].Wave4,
+                wave5: currentCategory[k].Wave5,
+                wave6: currentCategory[k].Wave6
+              };
+            //Remove the Country property
+              delete currentCategory[k].Country;
+              //Add the data to the country object
+              countryObject[gapminderDataVariables[j]] = waveObj;
+            }
+          }
+        }
         countryObjects.push(countryObject);
       }
       gapminderLoaded = true;
       createCountryBubbles();
+      addMappingButtonListners();
+
     });
     
 
@@ -267,6 +303,8 @@ function loadGapminderData() {
 //Function for creating the grouped bubbles chart with the countries
 function createCountryBubbles() {
   $("svg#countriesGrouped").empty();
+
+  $("#gapminderMapping").text(selectedGapminderVariable);
 
   //The dimensions of the SVG element of the grouped countries chart
   var width = d3.select("svg#countriesGrouped").attr("width"),
@@ -293,10 +331,11 @@ function createCountryBubbles() {
   //Create the root node (needed for the pack function)
   var root = d3.hierarchy({ children: filteredCountryObjects })
     .sum(function (d) {
-      if (d.gdp != undefined) {
-        //return 1;   //Same size bubbles
-        return d.gdp["wave" + selectedWave];    //Size mapped to the GDP of the country
+      //return 1;   //Same size bubbles
+      if (d[selectedGapminderVariable] != undefined) {
+        return d[selectedGapminderVariable]["wave" + selectedWave];    //Size mapped to the GDP of the country
       }
+//      console.log(d[selectedGapminderVariable]["wave" + selectedWave]);
     });
   //Map the data to node elements
   var node = chart.selectAll(".node")
@@ -758,3 +797,47 @@ function createWaveButtons() {
     });
 }
 
+function addMappingButtonListners() {
+  d3.select("button#gdpButton")
+    .on("click", function () {
+      selectedGapminderVariable = gapminderDataVariables[0];
+      selectedCountries = [];
+      createCountryBubbles();
+    });
+  d3.select("button#alcoholButton")
+    .on("click", function () {
+      selectedGapminderVariable = gapminderDataVariables[1];
+      selectedCountries = [];
+      createCountryBubbles();
+    });
+  d3.select("button#bmiFemaleButton")
+    .on("click", function () {
+      selectedGapminderVariable = gapminderDataVariables[2];
+      selectedCountries = [];
+      createCountryBubbles();
+    });
+  d3.select("button#bmiMaleButton")
+    .on("click", function () {
+      selectedGapminderVariable = gapminderDataVariables[3];
+      selectedCountries = [];
+      createCountryBubbles();
+    });
+  d3.select("button#healthButton")
+    .on("click", function () {
+      selectedGapminderVariable = gapminderDataVariables[4];
+      selectedCountries = [];
+      createCountryBubbles();
+    });
+  d3.select("button#suicideButton")
+    .on("click", function () {
+      selectedGapminderVariable = gapminderDataVariables[5];
+      selectedCountries = [];
+      createCountryBubbles();
+    });
+  d3.select("button#warButton")
+    .on("click", function () {
+      selectedGapminderVariable = gapminderDataVariables[6];
+      selectedCountries = [];
+      createCountryBubbles();
+    });
+}
