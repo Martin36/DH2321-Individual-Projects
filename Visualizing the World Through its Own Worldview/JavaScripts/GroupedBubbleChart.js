@@ -59,6 +59,7 @@ createWaveButtons();
 
 //Function for creating the grouped bubbles chart with the countries
 function createCountryBubbles() {
+  $("svg#countriesGrouped").empty();
 
   //The dimensions of the SVG element of the grouped countries chart
   var width = d3.select("svg#countriesGrouped").attr("width"),
@@ -261,6 +262,7 @@ function fixData(error, feelings, family, satisfaction, work, firstChoice, trust
   //For testing
   if (testing) {
     createBarChart();
+    createCountryBubbles();
   }
 };
 
@@ -397,8 +399,7 @@ function createBarChart() {
   legendScale.domain(legendData.map(function (d) {
     return d.name;
   }));
-  console.log(legendData);
-  //console.log(legendData);
+
   $("svg#legend").empty();
   //Create the legend in a separte SVG element
   //First create one group for each element
