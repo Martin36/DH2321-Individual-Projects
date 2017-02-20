@@ -14,6 +14,8 @@ var dataArray = [];
 //var dataArray6 = [];
 var countries = [];
 var countryObjects = [];
+//Variable for checking if gapminder data is loaded
+var gapminderLoaded = false;
 //Array containing the names of the variables
 var variablesArray = [
   "Feeling of happiness",
@@ -49,11 +51,207 @@ colorScales.push(d3.scaleOrdinal().range(['#fff7fb', '#ece2f0', '#d0d1e6', '#a6b
 colorScales.push(d3.scaleOrdinal().range(['#f7f4f9', '#e7e1ef', '#d4b9da', '#c994c7', '#df65b0', '#e7298a', '#ce1256', '#980043', '#67001f'].reverse()))
 colorScales.push(d3.scaleOrdinal().range(['#ffffe5', '#fff7bc', '#fee391', '#fec44f', '#fe9929', '#ec7014', '#cc4c02', '#993404', '#662506'].reverse()))
 
+//First we load the data
 loadData();
 
 createListOfVariables();
 
 createWaveButtons();
+
+//Function for loading the data of the variables
+function loadData() {
+  if (selectedWave == 6) {
+    d3.queue()
+      .defer(d3.csv, "Data/Feeling_of_happiness_Wave6.csv")
+      .defer(d3.csv, "Data/Important_in_life_Family_Wave6.csv")
+      .defer(d3.csv, "Data/Satisfaction_with_your_life_Wave6.csv")
+      .defer(d3.csv, "Data/Important_in_life_Work_Wave6.csv")
+      .defer(d3.csv, "Data/Most_important_first_choice_Wave6.csv")
+      .defer(d3.csv, "Data/Most_people_can_be_trusted_Wave6.csv")
+      .defer(d3.csv, "Data/Being_very_successful_Wave6.csv")
+      .defer(d3.csv, "Data/State_of_health_subjective_Wave6.csv")
+      .await(fixData);
+  }
+
+  if (selectedWave == 5) {
+    d3.queue()
+      .defer(d3.csv, "Data/Feeling_of_happiness_Wave5.csv")
+      .defer(d3.csv, "Data/Important_in_life_Family_Wave5.csv")
+      .defer(d3.csv, "Data/Satisfaction_with_your_life_Wave5.csv")
+      .defer(d3.csv, "Data/Important_in_life_Work_Wave5.csv")
+      .defer(d3.csv, "Data/Most_important_first_choice_Wave5.csv")
+      .defer(d3.csv, "Data/Most_people_can_be_trusted_Wave5.csv")
+      .defer(d3.csv, "Data/Being_very_successful_Wave5.csv")
+      .defer(d3.csv, "Data/State_of_health_subjective_Wave5.csv")
+      .await(fixData);
+  }
+
+  if (selectedWave == 4) {
+    d3.queue()
+      .defer(d3.csv, "Data/Feeling_of_happiness_Wave4.csv")
+      .defer(d3.csv, "Data/Important_in_life_Family_Wave4.csv")
+      .defer(d3.csv, "Data/Satisfaction_with_your_life_Wave4.csv")
+      .defer(d3.csv, "Data/Important_in_life_Work_Wave4.csv")
+      .defer(d3.csv, "Data/Most_important_first_choice_Wave4.csv")
+      .defer(d3.csv, "Data/State_of_health_subjective_Wave4.csv")
+      .await(function (error, cat1, cat2, cat3, cat4, cat5, cat6) {
+        if (error) { console.log(error); };
+
+        dataArray = [];
+        countries = [];
+
+        var allCategories = [cat1, cat2, cat3, cat4, cat5, cat6];
+        //Finds the length of the largest array
+        var maxLenght = Math.max(...allCategories.map(function(d) {return d.length})); //The ... syntax takes the elements in the array and places them as arguments to the function
+
+        //Create new objects containing the variables and country
+        for (var i = 0; i < maxLenght; i++) {
+          var countryObj = {};
+          countryObj.country = allCategories[0][i].Country;
+          //Add country to countries array if it is not alreay in there
+          if (countries.indexOf(countryObj.country) < 0) {
+            countries.push(countryObj.country);
+          }
+          for (var j = 0; j < allCategories.length; j++) {
+            //Array of the current category
+            var currentCategory = allCategories[j];
+            //Go through the objects in the current category the find the one that belongs to the current country
+            for (var k = 0; k < currentCategory.length; k++) {
+              if (currentCategory[k].Country == countryObj.country) {
+                //Remove the Country property
+                delete currentCategory[k].Country;
+                //Add the data to the country object
+                countryObj[variablesArray[j]] = currentCategory[k];
+              }
+            }
+          }
+          dataArray.push(countryObj);
+        }
+        if (selectedCountries.length > 0 && selectedVariables.length > 0) {
+          createBarChart();
+        }
+      });
+  }
+
+  if (selectedWave == 3) {
+    d3.queue()
+      .defer(d3.csv, "Data/Feeling_of_happiness_Wave3.csv")
+      .defer(d3.csv, "Data/Important_in_life_Family_Wave3.csv")
+      .defer(d3.csv, "Data/Satisfaction_with_your_life_Wave3.csv")
+      .defer(d3.csv, "Data/Important_in_life_Work_Wave3.csv")
+      .defer(d3.csv, "Data/Most_important_first_choice_Wave3.csv")
+      .defer(d3.csv, "Data/Most_people_can_be_trusted_Wave3.csv")
+      .defer(d3.csv, "Data/State_of_health_subjective_Wave3.csv")
+      .await(function (error, cat1, cat2, cat3, cat4, cat5, cat6, cat7) {
+        if (error) { console.log(error); };
+        dataArray = [];
+        countries = [];
+
+        var allCategories = [cat1, cat2, cat3, cat4, cat5, cat6, cat7];
+        //Finds the length of the largest array
+        var maxLenght = Math.max(...allCategories.map(function(d) {return d.length})); //The ... syntax takes the elements in the array and places them as arguments to the function
+
+        //Create new objects containing the variables and country
+        for (var i = 0; i < maxLenght; i++) {
+          var countryObj = {};
+          countryObj.country = allCategories[0][i].Country;
+          //Add country to countries array if it is not alreay in there
+          if (countries.indexOf(countryObj.country) < 0) {
+            countries.push(countryObj.country);
+          }
+          for (var j = 0; j < allCategories.length; j++) {
+            //Array of the current category
+            var currentCategory = allCategories[j];
+            //Go through the objects in the current category the find the one that belongs to the current country
+            for (var k = 0; k < currentCategory.length; k++) {
+              if (currentCategory[k].Country == countryObj.country) {
+                //Remove the Country property
+                delete currentCategory[k].Country;
+                //Add the data to the country object
+                countryObj[variablesArray[j]] = currentCategory[k];
+              }
+            }
+          }
+          dataArray.push(countryObj);
+        }
+        if (selectedCountries.length > 0 && selectedVariables.length > 0) {
+          createBarChart();
+        }
+
+      });
+  }
+  if (!gapminderLoaded) {
+    loadGapminderData();
+  } else {
+    createCountryBubbles();
+  }
+}
+
+//Used for restructuring the input data in loadData()
+function fixData(error, feelings, family, satisfaction, work, firstChoice, trust, successful, health) {
+  if (error) { console.log(error); };
+  dataArray = [];
+  countries = [];
+  var allCategories = [feelings, family, satisfaction, work, firstChoice, trust, successful, health];
+  //Finds the length of the largest array
+  var maxLenght = Math.max(...allCategories.map(function(d) {return d.length})); //The ... syntax takes the elements in the array and places them as arguments to the function
+
+  //Create new objects containing the variables and country
+  for (var i = 0; i < maxLenght; i++) {
+    var countryObj = {};
+    countryObj.country = allCategories[0][i].Country;
+    //Add country to countries array if it is not alreay in there
+    if (countries.indexOf(countryObj.country) < 0) {
+      countries.push(countryObj.country);
+    }
+    for (var j = 0; j < allCategories.length; j++) {
+      //Array of the current category
+      var currentCategory = allCategories[j];
+      //Go through the objects in the current category the find the one that belongs to the current country
+      for (var k = 0; k < currentCategory.length; k++) {
+        if (currentCategory[k].Country == countryObj.country) {
+          //Remove the Country property
+          delete currentCategory[k].Country;
+          //Add the data to the country object
+          countryObj[variablesArray[j]] = currentCategory[k];
+        }
+      }
+    }
+    dataArray.push(countryObj);
+  }
+  if (selectedCountries.length > 0 && selectedVariables.length > 0) {
+    createBarChart();
+  }
+
+};
+
+//Use to read the data from gapminder
+function loadGapminderData() {
+  d3.queue()
+    .defer(d3.csv, "Data/Gapminder_gdp_per_capita.csv")
+    .await(function (error, data) {
+      //Create objects containing the data
+      for (var i = 0; i < data.length; i++) {
+        
+       // var index = countries.indexOf(data[i].Country);
+        var waveObj = {
+          wave3: data[i].Wave3,
+          wave4: data[i].Wave4,
+          wave5: data[i].Wave5,
+          wave6: data[i].Wave6
+        };
+        var countryObject = {
+          country: data[i].Country,
+          gdp: waveObj
+        };
+        countryObjects.push(countryObject);
+      }
+      gapminderLoaded = true;
+      createCountryBubbles();
+    });
+    
+
+}
 
 //Function for creating the grouped bubbles chart with the countries
 function createCountryBubbles() {
@@ -73,9 +271,16 @@ function createCountryBubbles() {
     .size([width, height - 50])
     .padding(1);
 
+  //Filter the countries that exist in the current wave
+  var filteredCountryObjects = [];
+  for (var i = 0; i < countryObjects.length; i++) {
+    if (countries.indexOf(countryObjects[i].country) > -1) {
+      filteredCountryObjects.push(countryObjects[i]);
+    }
+  }
 
   //Create the root node (needed for the pack function)
-  var root = d3.hierarchy({ children: countryObjects })
+  var root = d3.hierarchy({ children: filteredCountryObjects })
     .sum(function (d) {
       if (d.gdp != undefined) {
         return d.gdp["wave" + selectedWave];
@@ -191,171 +396,6 @@ function createListOfVariables() {
 
 }
 
-//Function for loading the data of the variables
-function loadData() {
-  if (selectedWave == 6) {
-    d3.queue()
-      .defer(d3.csv, "Data/Feeling_of_happiness_Wave6.csv")
-      .defer(d3.csv, "Data/Important_in_life_Family_Wave6.csv")
-      .defer(d3.csv, "Data/Satisfaction_with_your_life_Wave6.csv")
-      .defer(d3.csv, "Data/Important_in_life_Work_Wave6.csv")
-      .defer(d3.csv, "Data/Most_important_first_choice_Wave6.csv")
-      .defer(d3.csv, "Data/Most_people_can_be_trusted_Wave6.csv")
-      .defer(d3.csv, "Data/Being_very_successful_Wave6.csv")
-      .defer(d3.csv, "Data/State_of_health_subjective_Wave6.csv")
-      .await(fixData);
-    }
-
-  if (selectedWave == 5) {
-    d3.queue()
-      .defer(d3.csv, "Data/Feeling_of_happiness_Wave5.csv")
-      .defer(d3.csv, "Data/Important_in_life_Family_Wave5.csv")
-      .defer(d3.csv, "Data/Satisfaction_with_your_life_Wave5.csv")
-      .defer(d3.csv, "Data/Important_in_life_Work_Wave5.csv")
-      .defer(d3.csv, "Data/Most_important_first_choice_Wave5.csv")
-      .defer(d3.csv, "Data/Most_people_can_be_trusted_Wave5.csv")
-      .defer(d3.csv, "Data/Being_very_successful_Wave5.csv")
-      .defer(d3.csv, "Data/State_of_health_subjective_Wave5.csv")
-      .await(fixData);
-  }
-
-  if (selectedWave == 4) {
-    d3.queue()
-      .defer(d3.csv, "Data/Feeling_of_happiness_Wave4.csv")
-      .defer(d3.csv, "Data/Important_in_life_Family_Wave4.csv")
-      .defer(d3.csv, "Data/Satisfaction_with_your_life_Wave4.csv")
-      .defer(d3.csv, "Data/Important_in_life_Work_Wave4.csv")
-      .defer(d3.csv, "Data/Most_important_first_choice_Wave4.csv")
-      .defer(d3.csv, "Data/State_of_health_subjective_Wave4.csv")
-      .await(function (error, cat1, cat2, cat3, cat4, cat5, cat6) {
-        if (error) { console.log(error); };
-
-        dataArray = [];
-        countries = [];
-
-        var allCategories = [cat1, cat2, cat3, cat4, cat5, cat6];
-        //Finds the length of the largest array
-        var maxLenght = Math.max(...allCategories.map(function(d) {return d.length})); //The ... syntax takes the elements in the array and places them as arguments to the function
-
-        //Create new objects containing the variables and country
-        for (var i = 0; i < maxLenght; i++) {
-          var countryObj = {};
-          countryObj.country = allCategories[0][i].Country;
-          //Add country to countries array if it is not alreay in there
-          if (countries.indexOf(countryObj.country) < 0) {
-            countries.push(countryObj.country);
-          }
-          for (var j = 0; j < allCategories.length; j++) {
-            //Array of the current category
-            var currentCategory = allCategories[j];
-            //Go through the objects in the current category the find the one that belongs to the current country
-            for (var k = 0; k < currentCategory.length; k++) {
-              if (currentCategory[k].Country == countryObj.country) {
-                //Remove the Country property
-                delete currentCategory[k].Country;
-                //Add the data to the country object
-                countryObj[variablesArray[j]] = currentCategory[k];
-              }
-            }
-          }
-          dataArray.push(countryObj);
-        }
-        //  console.log(countries);
-
-        //For testing
-        if (testing) {
-          createBarChart();
-          createCountryBubbles();
-        }
-
-      });
-  }
-
-  if (selectedWave == 3) {
-    d3.queue()
-      .defer(d3.csv, "Data/Feeling_of_happiness_Wave3.csv")
-      .defer(d3.csv, "Data/Important_in_life_Family_Wave3.csv")
-      .defer(d3.csv, "Data/Satisfaction_with_your_life_Wave3.csv")
-      .defer(d3.csv, "Data/Important_in_life_Work_Wave3.csv")
-      .defer(d3.csv, "Data/Most_important_first_choice_Wave3.csv")
-      .defer(d3.csv, "Data/Most_people_can_be_trusted_Wave3.csv")
-      .defer(d3.csv, "Data/State_of_health_subjective_Wave3.csv")
-      .await(function (error, cat1, cat2, cat3, cat4, cat5, cat6, cat7) {
-        if (error) { console.log(error); };
-        dataArray = [];
-        countries = [];
-
-        var allCategories = [cat1, cat2, cat3, cat4, cat5, cat6, cat7];
-        //Finds the length of the largest array
-        var maxLenght = Math.max(...allCategories.map(function(d) {return d.length})); //The ... syntax takes the elements in the array and places them as arguments to the function
-
-        //Create new objects containing the variables and country
-        for (var i = 0; i < maxLenght; i++) {
-          var countryObj = {};
-          countryObj.country = allCategories[0][i].Country;
-          //Add country to countries array if it is not alreay in there
-          if (countries.indexOf(countryObj.country) < 0) {
-            countries.push(countryObj.country);
-          }
-          for (var j = 0; j < allCategories.length; j++) {
-            //Array of the current category
-            var currentCategory = allCategories[j];
-            //Go through the objects in the current category the find the one that belongs to the current country
-            for (var k = 0; k < currentCategory.length; k++) {
-              if (currentCategory[k].Country == countryObj.country) {
-                //Remove the Country property
-                delete currentCategory[k].Country;
-                //Add the data to the country object
-                countryObj[variablesArray[j]] = currentCategory[k];
-              }
-            }
-          }
-          dataArray.push(countryObj);
-        }
-        //For testing
-        if (testing) {
-          createBarChart();
-          createCountryBubbles();
-        }
-      });
-  }
-
-  loadGapminderData();
-}
-
-function fixData(error, feelings, family, satisfaction, work, firstChoice, trust, successful, health) {
-  if (error) { console.log(error); };
-  dataArray = [];
-  countries = [];
-  var allCategories = [feelings, family, satisfaction, work, firstChoice, trust, successful, health];
-  //Finds the length of the largest array
-  var maxLenght = Math.max(...allCategories.map(function(d) {return d.length})); //The ... syntax takes the elements in the array and places them as arguments to the function
-
-  //Create new objects containing the variables and country
-  for (var i = 0; i < maxLenght; i++) {
-    var countryObj = {};
-    countryObj.country = allCategories[0][i].Country;
-    //Add country to countries array if it is not alreay in there
-    if (countries.indexOf(countryObj.country) < 0) {
-      countries.push(countryObj.country);
-    }
-    for (var j = 0; j < allCategories.length; j++) {
-      //Array of the current category
-      var currentCategory = allCategories[j];
-      //Go through the objects in the current category the find the one that belongs to the current country
-      for (var k = 0; k < currentCategory.length; k++) {
-        if (currentCategory[k].Country == countryObj.country) {
-          //Remove the Country property
-          delete currentCategory[k].Country;
-          //Add the data to the country object
-          countryObj[variablesArray[j]] = currentCategory[k];
-        }
-      }
-    }
-    dataArray.push(countryObj);
-  }
-};
-
 //https://bl.ocks.org/mbostock/3886394
 //Function for creating the stacked bar chart with the previously specified variables and countries
 function createBarChart() {
@@ -427,8 +467,10 @@ function createBarChart() {
     .data(function (d) {
       var newData = [];
       for (var i = 0; i < selectedVariables.length; i++) {
-        newData.push(d[selectedVariables[i]]);
-        newData[i].name = selectedVariables[i];
+        if (d[selectedVariables[i]] != undefined) {   //If there is not data for this variable for this country the leave it blank
+          newData.push(d[selectedVariables[i]]);
+          newData[newData.length-1].name = selectedVariables[i];
+        }
       }
       return newData;
     })
@@ -691,33 +733,3 @@ function createWaveButtons() {
     });
 }
 
-//Use to read the data from gapminder
-function loadGapminderData() {
-  d3.queue()
-    .defer(d3.csv, "Data/Gapminder_gdp_per_capita.csv")
-    .await(function (error, data) {
-      //Create objects containing the data
-      for (var i = 0; i < data.length; i++) {
-        //First check if this country exists in the other data
-        var index = countries.indexOf(data[i].Country);
-        if (index > -1) {
-          var waveObj = {
-            wave3: data[i].Wave3,
-            wave4: data[i].Wave4,
-            wave5: data[i].Wave5,
-            wave6: data[i].Wave6
-          };
-
-          var countryObject = {
-            country: data[i].Country,
-            gdp: waveObj
-          };
-          countryObjects.push(countryObject);
-        }
-      }
-    createCountryBubbles();
-    //createBarChart();
-    });
-
-
-}
