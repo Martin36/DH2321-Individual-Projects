@@ -379,6 +379,7 @@ function createBarChart() {
       .attr("class", "axis axis--y")
       .call(d3.axisLeft(y).ticks(10, "%"));
 
+  //Data for the legend
   var legendData = [];
   for (var key in data[0]) {
     if (selectedVariables.indexOf(key) > -1) {
@@ -396,7 +397,7 @@ function createBarChart() {
   legendScale.domain(legendData.map(function (d) {
     return d.name;
   }));
-
+  console.log(legendData);
   //console.log(legendData);
   $("svg#legend").empty();
   //Create the legend in a separte SVG element
@@ -408,7 +409,18 @@ function createBarChart() {
       .attr("font-family", "sans-serif")
       .attr("font-size", 10)
       .attr("text-anchor", "end")
-      .attr("transform", function (d, i) { return "translate(" + -i*150 +", 0)"; });
+      .attr("transform", function (d, i) { return "translate(" + -i * 230 + ", 0)"; });
+  
+  //Append header for the legend
+  legend.append("text")
+      .attr("x", width - 24)
+      .attr("y", 9.5)
+      .attr("dy", "0.32em")
+      .attr("transform", "translate(0, 0)")
+      .attr("font-size", 15)
+      .text(function (d) {
+        return d.name;
+      });
 
   //Then create a group element for each bar
   var rows = legend.selectAll("g")
@@ -431,7 +443,7 @@ function createBarChart() {
     .enter().append("g")
       .attr("transform", function (d, i) {
       //  console.log(d);
-        return "translate(0," + i * 20 + ")";
+        return "translate(0," + (20 + i * 20) + ")";
       });
 
 
