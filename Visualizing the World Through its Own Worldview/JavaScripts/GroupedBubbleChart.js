@@ -3,11 +3,11 @@ var selectedCountries = [];
 var selectedVariables = [];
 var selectedWave = 5;
 //For testing
-var testing = false;
+var testing = true;
 if (testing) {
   selectedCountries = ["Iraq", "Ghana", "India"];
   selectedVariables = ["Feeling of happiness", "Important in life: Family", "Satisfaction with your life"];
-  selectedWave = 5;
+  selectedWave = 6;
 }
 //Array containing the data
 var dataArray = [];
@@ -32,7 +32,7 @@ var tooltip = d3.select("body")
 	.style("position", "absolute")
 	.style("z-index", "10")
 	.style("visibility", "hidden")
-	.text("a simple tooltip");
+	.text("");
 
 var percentFormat = d3.format(".1%");
 
@@ -49,11 +49,12 @@ colorScales.push(d3.scaleOrdinal().range(['#fff7fb', '#ece2f0', '#d0d1e6', '#a6b
 colorScales.push(d3.scaleOrdinal().range(['#f7f4f9', '#e7e1ef', '#d4b9da', '#c994c7', '#df65b0', '#e7298a', '#ce1256', '#980043', '#67001f'].reverse()))
 colorScales.push(d3.scaleOrdinal().range(['#ffffe5', '#fff7bc', '#fee391', '#fec44f', '#fe9929', '#ec7014', '#cc4c02', '#993404', '#662506'].reverse()))
 
+loadData();
+
 createCountryBubbles();
 
 createListOfVariables();
 
-loadData();
 
 
 //Function for creating the grouped bubbles chart with the countries
@@ -79,9 +80,9 @@ function createCountryBubbles() {
 
 
     //Create the root node (needed for the pack function)
-    var root = d3.hierarchy({ children: data })
+    var root = d3.hierarchy({ children: countries })
       .sum(function (d) {
-        return d.Average;
+        return 1;
       });   //Gives all the bubbles the same size
 
     //Map the data to node elements
@@ -93,12 +94,12 @@ function createCountryBubbles() {
 
     //Uses the data stored in node to create a circle
     node.append("circle")
-       .attr("country", function (d) { return d.data.Country; })
+       .attr("country", function (d) { return d.data; })
        .attr("r", function (d) { return d.r; })
        .style("fill", "rgb(158, 154, 200)")
        .on("click", function (d) {
          //Find index of the element
-         var index = selectedCountries.indexOf(d.data.Country);
+         var index = selectedCountries.indexOf(d.data);
          //Check if country aleady is selected, otherwise we want to remove it
          if (index >= 0) {
            //Remove the element from the array
@@ -113,7 +114,7 @@ function createCountryBubbles() {
          }
          else {
            //Add the selected country to an array
-           selectedCountries.push(d.data.Country);
+           selectedCountries.push(d.data);
            //Set color to red
            d3.select(this).style("fill", "rgb(255, 0, 0)");
            //Enable the create bar chart button if a variable is selected
@@ -123,21 +124,14 @@ function createCountryBubbles() {
            }
          }
        });
-    /*    .on("mouseover", function (d) {
-          d3.select(this).style("fill", "rgb(255, 0, 0)");
-        })
-        .on("mouseout", function (d) {
-          d3.select(this).style("fill", "rgb(158, 154, 200)");
-        })
-        */
+
     //Add text to the bubbles
     node.append("text")
         .attr("text-anchor", "middle")
       .selectAll("tspan")
-      .data(function (d) { return d.data.Country.split(" "); })   //Splits the word at the space char and returns the words in an array
+      .data(function (d) { return d.data.split(" "); })   //Splits the word at the space char and returns the words in an array
       .enter().append("tspan")
         .attr("x", 0)
-        //.attr("y", 0)
         .attr("y", function (d, i, nodes) { return 13 + (i - nodes.length / 2 - 0.5) * 10; })
         .text(function (d) { return d; });
   });
@@ -201,7 +195,7 @@ function createListOfVariables() {
 
 //Function for loading the data of the variables
 function loadData() {
-  if (selectedWave) {
+  if (selectedWave == 6) {
     d3.queue()
       .defer(d3.csv, "Data/Feeling_of_happiness_Wave6.csv")
       .defer(d3.csv, "Data/Important_in_life_Family_Wave6.csv")
@@ -214,53 +208,43 @@ function loadData() {
       .await(function (error, feelings, family, satisfaction, work, firstChoice, trust, successful, health) {
         if (error) { console.log(error); };
 
+        var allCategories = [feelings, family, satisfaction, work, firstChoice, trust, successful, health];
+        //Finds the length of the largest array
+        var maxLenght = Math.max(...allCategories.map(function(d) {return d.length})); //The ... syntax takes the elements in the array and places them as arguments to the function
+
         //Create new objects containing the variables and country
-        for (var i = 0; i < feelings.length; i++) {
-          var countryObj;
-          var country = feelings[i].Country
-          var feelingsObj = feelings[i];
-          delete feelingsObj.Country;
-          var familyObj = family[i];
-          delete familyObj.Country;
-          var satisfactionObj = satisfaction[i];
-          delete satisfactionObj.Country;
-          var workObj = work[i];
-          delete workObj.Country;
-          var firstChoiceObj = firstChoice[i];
-          if (!firstChoiceObj) {
-            var firstChoiceObj = {};
-            firstChoiceObj.noData = 100;
-          } else {
-            delete firstChoiceObj.Country;
+        for (var i = 0; i < maxLenght; i++) {
+          var countryObj = {};
+          countryObj.country = allCategories[0][i].Country;
+          //Add country to countries array if it is not alreay in there
+          if (countries.indexOf(countryObj.country) < 0) {
+            countries.push(countryObj.country);
           }
-          var trustObj = trust[i];
-          delete trustObj.Country;
-          var successfulObj = successful[i];
-          delete successfulObj.Country;
-          var healthObj = health[i];
-          delete healthObj.Country;
-          countryObj = {
-            "country": country,
-            "Feeling of happiness": feelingsObj,
-            "Important in life: Family": familyObj,
-            "Satisfaction with your life": satisfactionObj,
-            "Important in life: Work": workObj,
-            "Most important first choice": firstChoiceObj,
-            "Most people can be trusted": trustObj,
-            "Being very successful is important to me": successfulObj,
-            "State of health subjective": healthObj
+          for (var j = 0; j < allCategories.length; j++) {
+            //Array of the current category
+            var currentCategory = allCategories[j];
+            //Go through the objects in the current category the find the one that belongs to the current country
+            for (var k = 0; k < currentCategory.length; k++) {
+              if (currentCategory[k].Country == countryObj.country) {
+                //Remove the Country property
+                delete currentCategory[k].Country;
+                //Add the data to the country object
+                countryObj[variablesArray[j]] = currentCategory[k];
+              }
+            }
           }
           dataArray.push(countryObj);
         }
-        console.log(dataArray);
+        //  console.log(countries);
+
         //For testing
         if (testing) {
           createBarChart();
         }
       });
-  }
+    }
 
-  if (selectedWave) {
+  if (selectedWave == 5) {
     d3.queue()
       .defer(d3.csv, "Data/Feeling_of_happiness_Wave5.csv")
       .defer(d3.csv, "Data/Important_in_life_Family_Wave5.csv")
@@ -300,7 +284,7 @@ function loadData() {
           }
           dataArray.push(countryObj);
         }
-        console.log(countries);
+      //  console.log(countries);
 
         //For testing
         if (testing) {
@@ -374,7 +358,6 @@ function createBarChart() {
   //Create the groups representing the bars and holding the stacked rectangles
   var stackedBars = barGroups.selectAll("g")
     .data(function (d) {
-      console.log(d);
       var newData = [];
       for (var i = 0; i < selectedVariables.length; i++) {
         newData.push(d[selectedVariables[i]]);
