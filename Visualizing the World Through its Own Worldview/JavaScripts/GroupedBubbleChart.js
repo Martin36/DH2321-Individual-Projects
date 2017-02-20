@@ -51,7 +51,7 @@ colorScales.push(d3.scaleOrdinal().range(['#ffffe5', '#fff7bc', '#fee391', '#fec
 
 loadData();
 
-createCountryBubbles();
+//createCountryBubbles();
 
 createListOfVariables();
 
@@ -75,56 +75,51 @@ function createCountryBubbles() {
     .size([width, height - 50])
     .padding(1);
 
-  //Load the data
-  d3.csv("Data/Feeling_of_happiness_average.csv", function (error, data) {
-    if (error) throw error;
+  //Create the root node (needed for the pack function)
+  var root = d3.hierarchy({ children: countries })
+    .sum(function (d) {
+      return 1;
+    });   //Gives all the bubbles the same size
 
+  //Map the data to node elements
+  var node = chart.selectAll(".node")
+    .data(pack(root).leaves())
+    .enter().append("g")
+      .attr("class", "node")
+      .attr("transform", function (d) { return "translate(" + d.x + "," + d.y + ")"; });
 
-    //Create the root node (needed for the pack function)
-    var root = d3.hierarchy({ children: countries })
-      .sum(function (d) {
-        return 1;
-      });   //Gives all the bubbles the same size
-
-    //Map the data to node elements
-    var node = chart.selectAll(".node")
-      .data(pack(root).leaves())
-      .enter().append("g")
-        .attr("class", "node")
-        .attr("transform", function (d) { return "translate(" + d.x + "," + d.y + ")"; });
-
-    //Uses the data stored in node to create a circle
-    node.append("circle")
-       .attr("country", function (d) { return d.data; })
-       .attr("r", function (d) { return d.r; })
-       .style("fill", "rgb(158, 154, 200)")
-       .on("click", function (d) {
-         //Find index of the element
-         var index = selectedCountries.indexOf(d.data);
-         //Check if country aleady is selected, otherwise we want to remove it
-         if (index >= 0) {
-           //Remove the element from the array
-           selectedCountries.splice(index, 1);
-           //Set color back to normal
-           d3.select(this).style("fill", "rgb(158, 154, 200)");
-           //Disable the create bar chart button if selectedCountries are empty
-           if (selectedCountries.length == 0) {
-             $('#createBarchartButton input[name="barchartButton"]')
-                .attr("disabled", true);
-           }
-         }
-         else {
-           //Add the selected country to an array
-           selectedCountries.push(d.data);
-           //Set color to red
-           d3.select(this).style("fill", "rgb(255, 0, 0)");
-           //Enable the create bar chart button if a variable is selected
-           if (selectedVariables.length != 0) {
-             $('#createBarchartButton input[name="barchartButton"]')
-                .attr("disabled", false);
-           }
-         }
-       });
+  //Uses the data stored in node to create a circle
+  node.append("circle")
+      .attr("country", function (d) { return d.data; })
+      .attr("r", function (d) { return d.r; })
+      .style("fill", "rgb(158, 154, 200)")
+      .on("click", function (d) {
+        //Find index of the element
+        var index = selectedCountries.indexOf(d.data);
+        //Check if country aleady is selected, otherwise we want to remove it
+        if (index >= 0) {
+          //Remove the element from the array
+          selectedCountries.splice(index, 1);
+          //Set color back to normal
+          d3.select(this).style("fill", "rgb(158, 154, 200)");
+          //Disable the create bar chart button if selectedCountries are empty
+          if (selectedCountries.length == 0) {
+            $('#createBarchartButton input[name="barchartButton"]')
+              .attr("disabled", true);
+          }
+        }
+        else {
+          //Add the selected country to an array
+          selectedCountries.push(d.data);
+          //Set color to red
+          d3.select(this).style("fill", "rgb(255, 0, 0)");
+          //Enable the create bar chart button if a variable is selected
+          if (selectedVariables.length != 0) {
+            $('#createBarchartButton input[name="barchartButton"]')
+              .attr("disabled", false);
+          }
+        }
+      });
 
     //Add text to the bubbles
     node.append("text")
@@ -135,7 +130,6 @@ function createCountryBubbles() {
         .attr("x", 0)
         .attr("y", function (d, i, nodes) { return 13 + (i - nodes.length / 2 - 0.5) * 10; })
         .text(function (d) { return d; });
-  });
 
 }
 
