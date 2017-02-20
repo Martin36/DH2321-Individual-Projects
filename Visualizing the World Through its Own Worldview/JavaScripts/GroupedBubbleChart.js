@@ -55,7 +55,7 @@ createCountryBubbles();
 
 createListOfVariables();
 
-
+createWaveButtons();
 
 //Function for creating the grouped bubbles chart with the countries
 function createCountryBubbles() {
@@ -228,7 +228,7 @@ function loadData() {
 
 function fixData(error, feelings, family, satisfaction, work, firstChoice, trust, successful, health) {
   if (error) { console.log(error); };
-
+  dataArray = [];
   var allCategories = [feelings, family, satisfaction, work, firstChoice, trust, successful, health];
   //Finds the length of the largest array
   var maxLenght = Math.max(...allCategories.map(function(d) {return d.length})); //The ... syntax takes the elements in the array and places them as arguments to the function
@@ -526,5 +526,29 @@ function clean(obj, properties) {
 
 //Function for creating buttons that gives the user the ability to change the "wave" of the data
 function createWaveButtons() {
+  //Find the buttons and add listeners to them
+  d3.select("button#wave3Button")
+    .on("click", function () {
+      selectedWave = 3;
+      loadData();
+    })
+
+  d3.select("button#wave4Button")
+    .on("click", function () {
+      selectedWave = 4;
+      loadData();
+    })
+
+  d3.select("button#wave5Button")
+    .on("click", function () {
+      selectedWave = 5;
+      loadData();
+    })
+
+  d3.select("button#wave6Button")
+    .on("click", function () {
+      selectedWave = 6;
+      loadData();
+    })
 
 }
