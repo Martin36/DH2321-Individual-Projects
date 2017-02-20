@@ -216,6 +216,68 @@ function loadData() {
       .await(fixData);
   }
 
+  if (selectedWave == 4) {
+    d3.queue()
+      .defer(d3.csv, "Data/Feeling_of_happiness_Wave4.csv")
+      .defer(d3.csv, "Data/Important_in_life_Family_Wave4.csv")
+      .defer(d3.csv, "Data/Satisfaction_with_your_life_Wave4.csv")
+      .defer(d3.csv, "Data/Important_in_life_Work_Wave4.csv")
+      .defer(d3.csv, "Data/Most_important_first_choice_Wave4.csv")
+      .defer(d3.csv, "Data/State_of_health_subjective_Wave4.csv")
+      .await(function (error, cat1, cat2, cat3, cat4, cat5, cat6) {
+        if (error) { console.log(error); };
+        dataArray = [];
+        
+        var categoryNames = variablesArray;
+        /*
+        //Remove the variable names that are not in the data set
+        for (var i = 0; i < variablesArray.length; i++) {
+          if (variablesArray[i] == "Being very successful is important to me" || variablesArray[i] == "Most people can be trusted") {
+            continue;
+          } else {
+            categoryNames.push(variablesArray[i]);
+          }
+          
+        }
+        */
+        var allCategories = [cat1, cat2, cat3, cat4, cat5, cat6];
+        //Finds the length of the largest array
+        var maxLenght = Math.max(...allCategories.map(function(d) {return d.length})); //The ... syntax takes the elements in the array and places them as arguments to the function
+
+        //Create new objects containing the variables and country
+        for (var i = 0; i < maxLenght; i++) {
+          var countryObj = {};
+          countryObj.country = allCategories[0][i].Country;
+          //Add country to countries array if it is not alreay in there
+          if (countries.indexOf(countryObj.country) < 0) {
+            countries.push(countryObj.country);
+          }
+          for (var j = 0; j < allCategories.length; j++) {
+            //Array of the current category
+            var currentCategory = allCategories[j];
+            //Go through the objects in the current category the find the one that belongs to the current country
+            for (var k = 0; k < currentCategory.length; k++) {
+              if (currentCategory[k].Country == countryObj.country) {
+                //Remove the Country property
+                delete currentCategory[k].Country;
+                //Add the data to the country object
+                countryObj[categoryNames[j]] = currentCategory[k];
+              }
+            }
+          }
+          dataArray.push(countryObj);
+        }
+        //  console.log(countries);
+
+        //For testing
+        if (testing) {
+          createBarChart();
+          createCountryBubbles();
+        }
+
+      });
+  }
+
 
 
 
@@ -295,6 +357,13 @@ function createBarChart() {
   selectedVariables.sort(function (a, b) {
     return (variablesArray.indexOf(a) < variablesArray.indexOf(b)) ? -1 : 1;
   });
+  //Remove the variables that do not exist in this wave
+  for (var i = 0; i < selectedVariables.length; i++) {
+    //If the selected variable is not in the array, then remove it from the selected variables
+    if (variablesArray.indexOf(selectedVariables[i]) < 0) {
+      selectedVariables.splice(i, 1);
+    }
+  }
 
   //Create the color scale
   var z = [];
@@ -525,25 +594,80 @@ function createWaveButtons() {
   d3.select("button#wave3Button")
     .on("click", function () {
       selectedWave = 3;
+      //Change the variables array so that the variables not included in this wave does not exist
+      variablesArray = [
+        "Feeling of happiness",
+        "Important in life: Family",
+        "Satisfaction with your life",
+        "Important in life: Work",
+        "Most important first choice",
+        "Most people can be trusted",
+        "State of health subjective"
+      ];
+      var missingVariables = [
+        "Being very successful is important to me"
+      ];
+      $('#listOfVariables input[name=' + missingVariables[0] + ']')
+        .attr("disabled", false);
       loadData();
-    })
+    });
 
   d3.select("button#wave4Button")
     .on("click", function () {
       selectedWave = 4;
+      //Array containing the names of the variables
+      variablesArray = [
+        "Feeling of happiness",
+        "Important in life: Family",
+        "Satisfaction with your life",
+        "Important in life: Work",
+        "Most important first choice",
+        "State of health subjective"
+      ];
+      var missingVariables = [
+        "Most people can be trusted",
+        "Being very successful is important to me"
+      ];
+
+      $('#listOfVariables input[name="' + missingVariables[0] + '"]')
+        .attr("disabled", false);
+      $('#listOfVariables input[name="' + missingVariables[1] + '"]')
+        .attr("disabled", false);
+
       loadData();
-    })
+    });
 
   d3.select("button#wave5Button")
     .on("click", function () {
       selectedWave = 5;
+      //Array containing the names of the variables
+      variablesArray = [
+        "Feeling of happiness",
+        "Important in life: Family",
+        "Satisfaction with your life",
+        "Important in life: Work",
+        "Most important first choice",
+        "Most people can be trusted",
+        "Being very successful is important to me",
+        "State of health subjective"
+      ];
       loadData();
-    })
+    });
 
   d3.select("button#wave6Button")
     .on("click", function () {
       selectedWave = 6;
+      //Array containing the names of the variables
+      variablesArray = [
+        "Feeling of happiness",
+        "Important in life: Family",
+        "Satisfaction with your life",
+        "Important in life: Work",
+        "Most important first choice",
+        "Most people can be trusted",
+        "Being very successful is important to me",
+        "State of health subjective"
+      ];
       loadData();
-    })
-
+    });
 }
