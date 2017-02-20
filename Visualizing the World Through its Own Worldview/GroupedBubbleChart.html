@@ -12,18 +12,48 @@
   
 </head>
 <body style="background-color: grey">
-  
+  <div class="header">
+    <h1>Select which countries you want to compare</h1>
+    <h2>
+      The size represents the GDP per capita for each country
+    </h2>
+  </div>
   <svg id="countriesGrouped" width="1200" height="800"></svg>
-  
+  <div class="header">
+    <h1>Select which variables to compare the countries by</h1>
+  </div>
   <div id="listOfVariables"></div>
   <div id="createBarchartButton"></div>
-  <svg id="legend" width="1400" height="300"></svg>
-  <svg id="stackedBarChart" width="1400" height="500"></svg>
-  <div class="waveContainer">
+  <svg id="legend" width="1400" height="200" ></svg>
+  <svg id="stackedBarChart" width="1400" height="500" ></svg>
+  <div class="waveContainer" style="display:none">
     <button id="wave3Button" class="waveButton">Wave 3 (1995 - 1999)</button>
     <button id="wave4Button" class="waveButton">Wave 4 (2000 - 2004)</button>
     <button id="wave5Button" class="waveButton">Wave 5 (2005 - 2009)</button>
     <button id="wave6Button" class="waveButton">Wave 6 (2010 - 2014)</button>
+  </div>
+  <!-- The first analytic trail -->
+  <div class="header" style="width:40%">
+    <h1> Analytic trail 1</h1>
+    <p>
+      My idea was to reasearch how citizens of different countries 
+      considered them selves happy or not and if happiness was correlated with some other variables.
+      I found some variables that I though would correlate a bit with the happiness the citizens felt.
+      In my visualization the user first selects the countries which are to be compared. 
+    </p>
+    <img class="resize" src="Images/BubbleChart.png"/>
+    <p>
+      Then a set of variables are selected.
+    </p>
+    <img src="Images/ListOfVariables.png" />
+    <p>
+      In the bar chart below we can compare the selected variables. 
+      If we start by comparing the bars for "Feeling of happiness" and
+      "Satisfaction with your life" we see that they are correlated 
+      (which was not a big suprise).
+    </p>
+    <img src="Images/BarChart.png" />
+
   </div>
   <!-- D3 scripts-->
   <script src="http://d3js.org/d3.v4.min.js"></script>

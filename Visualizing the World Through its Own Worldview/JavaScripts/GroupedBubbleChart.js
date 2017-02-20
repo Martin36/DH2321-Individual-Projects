@@ -130,6 +130,12 @@ function loadData() {
         if (selectedCountries.length > 0 && selectedVariables.length > 0) {
           createBarChart();
         }
+        if (!gapminderLoaded) {
+          loadGapminderData();
+        } else {
+          createCountryBubbles();
+        }
+
       });
   }
 
@@ -177,13 +183,13 @@ function loadData() {
         if (selectedCountries.length > 0 && selectedVariables.length > 0) {
           createBarChart();
         }
+        if (!gapminderLoaded) {
+          loadGapminderData();
+        } else {
+          createCountryBubbles();
+        }
 
       });
-  }
-  if (!gapminderLoaded) {
-    loadGapminderData();
-  } else {
-    createCountryBubbles();
   }
 }
 
@@ -221,6 +227,11 @@ function fixData(error, feelings, family, satisfaction, work, firstChoice, trust
   }
   if (selectedCountries.length > 0 && selectedVariables.length > 0) {
     createBarChart();
+  }
+  if (!gapminderLoaded) {
+    loadGapminderData();
+  } else {
+    createCountryBubbles();
   }
 
 };
@@ -283,7 +294,8 @@ function createCountryBubbles() {
   var root = d3.hierarchy({ children: filteredCountryObjects })
     .sum(function (d) {
       if (d.gdp != undefined) {
-        return d.gdp["wave" + selectedWave];
+        //return 1;   //Same size bubbles
+        return d.gdp["wave" + selectedWave];    //Size mapped to the GDP of the country
       }
     });
   //Map the data to node elements
@@ -399,6 +411,15 @@ function createListOfVariables() {
 //https://bl.ocks.org/mbostock/3886394
 //Function for creating the stacked bar chart with the previously specified variables and countries
 function createBarChart() {
+  //Show the SVG element for the bar chart
+  if ($("svg#stackedBarChart").is(":hidden")) {
+    $("svg#stackedBarChart").toggle();
+  }
+  //Show the SVG element for the legends
+  if ($("svg#legend").is(":hidden")) {
+    $("svg#legend").toggle();
+  }
+
   //Clear the SVG if there already exists a var chart
   $("svg#stackedBarChart").empty();
   //The data that is to be used
@@ -602,6 +623,10 @@ function createBarChart() {
       .attr("dy", "0.32em")
       .text(function (d) { return d.name; });
 
+  //Show the "wave buttons"
+  if ($(".waveContainer").is(":hidden")) {
+    $(".waveContainer").toggle();
+  }
 }
 
 //Filters the data so that only the selected countries are left

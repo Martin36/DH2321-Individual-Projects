@@ -1,6 +1,10 @@
 ﻿body {
 }
 
+p{
+  font-size:20px;
+}
+
 #listOfVariables {
   margin-left: 20px;
 }
@@ -20,4 +24,14 @@
 
 .svgText{
   pointer-events:none
+}
+
+.header{
+  margin-left: 20px;
+  align-items:center;
+}
+
+img.resize{
+  width : 110%;
+  height:auto;
 }
