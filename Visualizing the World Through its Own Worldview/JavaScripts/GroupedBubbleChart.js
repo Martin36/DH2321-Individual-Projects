@@ -662,6 +662,14 @@ function createBarChart() {
       .attr("dy", "0.32em")
       .text(function (d) { return d.name; });
 
+  d3.select("svg#legend").append("text")
+      .attr("x", width - 24)
+      .attr("y", 9.5)
+      .attr("dy", "0.32em")
+      .attr("transform", "translate(-1200, 40)")
+      .attr("font-size", 30)
+      .text("Selected Wave: " + selectedWave);
+
   //Show the "wave buttons"
   if ($(".waveContainer").is(":hidden")) {
     $(".waveContainer").toggle();
