@@ -3,7 +3,7 @@ var selectedCountries = [];
 var selectedVariables = [];
 var selectedWave = 5;
 //For testing
-var testing = true;
+var testing = false;
 if (testing) {
   selectedCountries = ["Iraq", "Ghana", "India"];
   selectedVariables = ["Feeling of happiness", "Important in life: Family", "Satisfaction with your life"];
@@ -13,7 +13,7 @@ if (testing) {
 var dataArray = [];
 //var dataArray6 = [];
 var countries = [];
-
+var countryObjects = [];
 //Array containing the names of the variables
 var variablesArray = [
   "Feeling of happiness",
@@ -51,8 +51,6 @@ colorScales.push(d3.scaleOrdinal().range(['#ffffe5', '#fff7bc', '#fee391', '#fec
 
 loadData();
 
-//createCountryBubbles();
-
 createListOfVariables();
 
 createWaveButtons();
@@ -75,12 +73,14 @@ function createCountryBubbles() {
     .size([width, height - 50])
     .padding(1);
 
-  //Create the root node (needed for the pack function)
-  var root = d3.hierarchy({ children: countries })
-    .sum(function (d) {
-      return 1;
-    });   //Gives all the bubbles the same size
 
+  //Create the root node (needed for the pack function)
+  var root = d3.hierarchy({ children: countryObjects })
+    .sum(function (d) {
+      if (d.gdp != undefined) {
+        return d.gdp["wave" + selectedWave];
+      }
+    });
   //Map the data to node elements
   var node = chart.selectAll(".node")
     .data(pack(root).leaves())
@@ -90,12 +90,12 @@ function createCountryBubbles() {
 
   //Uses the data stored in node to create a circle
   node.append("circle")
-      .attr("country", function (d) { return d.data; })
+      .attr("country", function (d) { return d.data.country; })
       .attr("r", function (d) { return d.r; })
       .style("fill", "rgb(158, 154, 200)")
       .on("click", function (d) {
         //Find index of the element
-        var index = selectedCountries.indexOf(d.data);
+        var index = selectedCountries.indexOf(d.data.country);
         //Check if country aleady is selected, otherwise we want to remove it
         if (index >= 0) {
           //Remove the element from the array
@@ -110,7 +110,7 @@ function createCountryBubbles() {
         }
         else {
           //Add the selected country to an array
-          selectedCountries.push(d.data);
+          selectedCountries.push(d.data.country);
           //Set color to red
           d3.select(this).style("fill", "rgb(255, 0, 0)");
           //Enable the create bar chart button if a variable is selected
@@ -124,8 +124,11 @@ function createCountryBubbles() {
     //Add text to the bubbles
     node.append("text")
         .attr("text-anchor", "middle")
+        .attr("class", "svgText")
       .selectAll("tspan")
-      .data(function (d) { return d.data.split(" "); })   //Splits the word at the space char and returns the words in an array
+      .data(function (d) {
+        return d.data.country.split(" ");
+      })   //Splits the word at the space char and returns the words in an array
       .enter().append("tspan")
         .attr("x", 0)
         .attr("y", function (d, i, nodes) { return 13 + (i - nodes.length / 2 - 0.5) * 10; })
@@ -281,7 +284,6 @@ function loadData() {
         if (error) { console.log(error); };
         dataArray = [];
         countries = [];
-        var categoryNames = variablesArray;
 
         var allCategories = [cat1, cat2, cat3, cat4, cat5, cat6, cat7];
         //Finds the length of the largest array
@@ -304,7 +306,7 @@ function loadData() {
                 //Remove the Country property
                 delete currentCategory[k].Country;
                 //Add the data to the country object
-                countryObj[categoryNames[j]] = currentCategory[k];
+                countryObj[variablesArray[j]] = currentCategory[k];
               }
             }
           }
@@ -317,6 +319,8 @@ function loadData() {
         }
       });
   }
+
+  loadGapminderData();
 }
 
 function fixData(error, feelings, family, satisfaction, work, firstChoice, trust, successful, health) {
@@ -349,13 +353,6 @@ function fixData(error, feelings, family, satisfaction, work, firstChoice, trust
       }
     }
     dataArray.push(countryObj);
-  }
-  //  console.log(countries);
-
-  //For testing
-  if (testing) {
-    createBarChart();
-    createCountryBubbles();
   }
 };
 
@@ -692,4 +689,35 @@ function createWaveButtons() {
       ];
       loadData();
     });
+}
+
+//Use to read the data from gapminder
+function loadGapminderData() {
+  d3.queue()
+    .defer(d3.csv, "Data/Gapminder_gdp_per_capita.csv")
+    .await(function (error, data) {
+      //Create objects containing the data
+      for (var i = 0; i < data.length; i++) {
+        //First check if this country exists in the other data
+        var index = countries.indexOf(data[i].Country);
+        if (index > -1) {
+          var waveObj = {
+            wave3: data[i].Wave3,
+            wave4: data[i].Wave4,
+            wave5: data[i].Wave5,
+            wave6: data[i].Wave6
+          };
+
+          var countryObject = {
+            country: data[i].Country,
+            gdp: waveObj
+          };
+          countryObjects.push(countryObject);
+        }
+      }
+    createCountryBubbles();
+    //createBarChart();
+    });
+
+
 }

@@ -17,3 +17,7 @@
 .waveContainer{
   margin-bottom: 50px;
 }
+
+.svgText{
+  pointer-events:none
+}
