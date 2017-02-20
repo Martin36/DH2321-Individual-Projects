@@ -1,14 +1,19 @@
 ﻿//Arrays to hold selections
 var selectedCountries = [];
 var selectedVariables = [];
+var selectedWave = 5;
 //For testing
-var testing = true;
+var testing = false;
 if (testing) {
   selectedCountries = ["Iraq", "Ghana", "India"];
   selectedVariables = ["Feeling of happiness", "Important in life: Family", "Satisfaction with your life"];
+  selectedWave = 5;
 }
 //Array containing the data
 var dataArray = [];
+//var dataArray6 = [];
+var countries = [];
+
 //Array containing the names of the variables
 var variablesArray = [
   "Feeling of happiness",
@@ -196,64 +201,113 @@ function createListOfVariables() {
 
 //Function for loading the data of the variables
 function loadData() {
+  if (selectedWave) {
+    d3.queue()
+      .defer(d3.csv, "Data/Feeling_of_happiness_Wave6.csv")
+      .defer(d3.csv, "Data/Important_in_life_Family_Wave6.csv")
+      .defer(d3.csv, "Data/Satisfaction_with_your_life_Wave6.csv")
+      .defer(d3.csv, "Data/Important_in_life_Work_Wave6.csv")
+      .defer(d3.csv, "Data/Most_important_first_choice_Wave6.csv")
+      .defer(d3.csv, "Data/Most_people_can_be_trusted_Wave6.csv")
+      .defer(d3.csv, "Data/Being_very_successful_Wave6.csv")
+      .defer(d3.csv, "Data/State_of_health_subjective_Wave6.csv")
+      .await(function (error, feelings, family, satisfaction, work, firstChoice, trust, successful, health) {
+        if (error) { console.log(error); };
 
-  d3.queue()
-    .defer(d3.csv, "Data/Feeling_of_happiness_Wave6.csv")
-    .defer(d3.csv, "Data/Important_in_life_Family_Wave6.csv")
-    .defer(d3.csv, "Data/Satisfaction_with_your_life_Wave6.csv")
-    .defer(d3.csv, "Data/Important_in_life_Work_Wave6.csv")
-    .defer(d3.csv, "Data/Most_important_first_choice_Wave6.csv")
-    .defer(d3.csv, "Data/Most_people_can_be_trusted_Wave6.csv")
-    .defer(d3.csv, "Data/Being_very_successful_Wave6.csv")
-    .defer(d3.csv, "Data/State_of_health_subjective_Wave6.csv")
-    .await(function (error, feelings, family, satisfaction, work, firstChoice, trust, successful, health) {
-      if (error) { console.log(error); };
-
-      //Create new objects containing the variables and country
-      for(var i = 0; i < feelings.length; i++){
-        var countryObj;
-        var country = feelings[i].Country
-        var feelingsObj = feelings[i];
-        delete feelingsObj.Country;
-        var familyObj = family[i];
-        delete familyObj.Country;
-        var satisfactionObj = satisfaction[i];
-        delete satisfactionObj.Country;
-        var workObj = work[i];
-        delete workObj.Country;
-        var firstChoiceObj = firstChoice[i];
-        if (!firstChoiceObj) {
-          var firstChoiceObj = {};
-          firstChoiceObj.noData = 100;
-        } else {
-          delete firstChoiceObj.Country;
+        //Create new objects containing the variables and country
+        for (var i = 0; i < feelings.length; i++) {
+          var countryObj;
+          var country = feelings[i].Country
+          var feelingsObj = feelings[i];
+          delete feelingsObj.Country;
+          var familyObj = family[i];
+          delete familyObj.Country;
+          var satisfactionObj = satisfaction[i];
+          delete satisfactionObj.Country;
+          var workObj = work[i];
+          delete workObj.Country;
+          var firstChoiceObj = firstChoice[i];
+          if (!firstChoiceObj) {
+            var firstChoiceObj = {};
+            firstChoiceObj.noData = 100;
+          } else {
+            delete firstChoiceObj.Country;
+          }
+          var trustObj = trust[i];
+          delete trustObj.Country;
+          var successfulObj = successful[i];
+          delete successfulObj.Country;
+          var healthObj = health[i];
+          delete healthObj.Country;
+          countryObj = {
+            "country": country,
+            "Feeling of happiness": feelingsObj,
+            "Important in life: Family": familyObj,
+            "Satisfaction with your life": satisfactionObj,
+            "Important in life: Work": workObj,
+            "Most important first choice": firstChoiceObj,
+            "Most people can be trusted": trustObj,
+            "Being very successful is important to me": successfulObj,
+            "State of health subjective": healthObj
+          }
+          dataArray.push(countryObj);
         }
-        var trustObj = trust[i];
-        delete trustObj.Country;
-        var successfulObj = successful[i];
-        delete successfulObj.Country;
-        var healthObj = health[i];
-        delete healthObj.Country;
-        countryObj = {
-          "country": country,
-          "Feeling of happiness": feelingsObj,
-          "Important in life: Family": familyObj,
-          "Satisfaction with your life": satisfactionObj,
-          "Important in life: Work": workObj,
-          "Most important first choice": firstChoiceObj,
-          "Most people can be trusted": trustObj,
-          "Being very successful is important to me": successfulObj,
-          "State of health subjective": healthObj
+        console.log(dataArray);
+        //For testing
+        if (testing) {
+          createBarChart();
         }
-        dataArray.push(countryObj);
-      }
+      });
+  }
 
-      //For testing
-      if (testing) {
-        createBarChart();
-      }
+  if (selectedWave) {
+    d3.queue()
+      .defer(d3.csv, "Data/Feeling_of_happiness_Wave5.csv")
+      .defer(d3.csv, "Data/Important_in_life_Family_Wave5.csv")
+      .defer(d3.csv, "Data/Satisfaction_with_your_life_Wave5.csv")
+      .defer(d3.csv, "Data/Important_in_life_Work_Wave5.csv")
+      .defer(d3.csv, "Data/Most_important_first_choice_Wave5.csv")
+      .defer(d3.csv, "Data/Most_people_can_be_trusted_Wave5.csv")
+      .defer(d3.csv, "Data/Being_very_successful_Wave5.csv")
+      .defer(d3.csv, "Data/State_of_health_subjective_Wave5.csv")
+      .await(function (error, feelings, family, satisfaction, work, firstChoice, trust, successful, health) {
+        if (error) { console.log(error); };
 
-    });
+        var allCategories = [feelings, family, satisfaction, work, firstChoice, trust, successful, health];
+        //Finds the length of the largest array
+        var maxLenght = Math.max(...allCategories.map(function(d) {return d.length})); //The ... syntax takes the elements in the array and places them as arguments to the function
+          
+        //Create new objects containing the variables and country
+        for (var i = 0; i < maxLenght; i++) {
+          var countryObj = {};
+          countryObj.country = allCategories[0][i].Country;
+          //Add country to countries array if it is not alreay in there
+          if (countries.indexOf(countryObj.country) < 0) {
+            countries.push(countryObj.country);
+          }
+          for (var j = 0; j < allCategories.length; j++) {
+            //Array of the current category
+            var currentCategory = allCategories[j];
+            //Go through the objects in the current category the find the one that belongs to the current country
+            for(var k = 0; k < currentCategory.length; k++){
+              if (currentCategory[k].Country == countryObj.country) {
+                //Remove the Country property
+                delete currentCategory[k].Country;
+                //Add the data to the country object
+                countryObj[variablesArray[j]] = currentCategory[k];
+              }
+            }
+          }
+          dataArray.push(countryObj);
+        }
+        console.log(countries);
+
+        //For testing
+        if (testing) {
+          createBarChart();
+        }
+      });
+  }
 
 
 }
@@ -263,10 +317,8 @@ function loadData() {
 function createBarChart() {
   //Clear the SVG if there already exists a var chart
   $("svg#stackedBarChart").empty();
-
   //The data that is to be used
   var data = dataArray;
-
   //Filter countries
   for (var i in data) {
     data = filterCountries(data);
@@ -284,11 +336,9 @@ function createBarChart() {
     .rangeRound([0, width])
     .padding(0.1)
     .align(0.1);
-
   //Scaling for inside the group
   var x1 = d3.scaleBand()
     .padding(0.05);
-
   //Create the scaling for the y-axis
   var y = d3.scaleLinear()
     .rangeRound([height, 0]);
@@ -305,7 +355,7 @@ function createBarChart() {
     //Map the colors to each category
     z[selectedVariables[i]].domain(Object.keys(data[0][selectedVariables[i]]));
   }
-
+  //The stack variable will stack the rectangles on each other
   var stack = d3.stack()
       .offset(d3.stackOffsetExpand);
 
@@ -324,6 +374,7 @@ function createBarChart() {
   //Create the groups representing the bars and holding the stacked rectangles
   var stackedBars = barGroups.selectAll("g")
     .data(function (d) {
+      console.log(d);
       var newData = [];
       for (var i = 0; i < selectedVariables.length; i++) {
         newData.push(d[selectedVariables[i]]);
@@ -448,28 +499,7 @@ function createBarChart() {
       .attr("dy", "0.32em")
       .text(function (d) { return d.name; });
 
-  /*
-  var legend = serie.append("g")
-      .attr("class", "legend")
-      .attr("transform", function (d) {
-        var d = d[d.length - 1];
-        return "translate(" + (x0(d.data.Country) + x0.bandwidth()) + "," + ((y(d[0]) + y(d[1])) / 2) + ")";
-      });
-
-  legend.append("line")
-      .attr("x1", -6)
-      .attr("x2", 6)
-      .attr("stroke", "#000");
-
-  legend.append("text")
-      .attr("x", 9)
-      .attr("dy", "0.35em")
-      .attr("fill", "#000")
-      .style("font", "10px sans-serif")
-      .text(function (d) { return d.key; });
-      */
 }
-
 
 //Filters the data so that only the selected countries are left
 function filterCountries(data) {
@@ -529,4 +559,9 @@ function clean(obj, properties) {
     newObj = obj;
     return newObj;
   }
+}
+
+//Function for creating buttons that gives the user the ability to change the "wave" of the data
+function createWaveButtons() {
+
 }

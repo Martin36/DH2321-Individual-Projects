@@ -8,3 +8,12 @@
 #createBarchartButton{
   margin-left: 20px;
 }
+
+.waveButton{
+  margin-left: 20px;
+  margin-right: 10px;
+}
+
+.waveContainer{
+  margin-bottom: 50px;
+}
