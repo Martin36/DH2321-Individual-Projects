@@ -46,7 +46,7 @@
     <button id="wave6Button" class="waveButton">Wave 6 (2010 - 2014)</button>
   </div>
   <!-- The first analytic trail -->
-  <div class="header" style="width:40%">
+  <div class="header">
     <h1> Analytic trail 1</h1>
     <p>
       My idea was to reasearch how citizens of different countries 
@@ -54,7 +54,7 @@
       I found some variables that I though would correlate a bit with the happiness the citizens felt.
       In my visualization the user first selects the countries which are to be compared. 
     </p>
-    <img class="resize" src="Images/BubbleChart.png"/>
+    <img class="" src="Images/BubbleChart.png"/>
     <p>
       Then a set of variables are selected.
     </p>
@@ -63,10 +63,45 @@
       In the bar chart below we can compare the selected variables. 
       If we start by comparing the bars for "Feeling of happiness" and
       "Satisfaction with your life" we see that they are correlated 
-      (which was not a big suprise).
+      (which may not have been such a big suprise).
     </p>
     <img src="Images/BarChart.png" />
-
+    <p>
+      We can also select which wave should be shown.
+    </p>
+    <img src="Images/BarChart_Wave6.png" />
+  </div>
+  <div class="header">
+    <h2> Analytic trail 2 </h2>
+    <p>
+      In the second analytic trail I made use of the Gapminder data by mapping it to the "country bubbles". 
+      Since Gapminder has a lot of financial and health data, I took the opportunity to compare happiness to 
+      wealth and health. Here we see the alcohol consumption mapped to the size:
+    </p>
+    <img src="Images/BubbleChart_Alcohol.png" />
+    <p>
+      My hypotesis was that this data was invered correlated to happiness and state of health. 
+    </p>
+    <img src="Images/BarChart2.png" />
+    <p>
+      According to this bar chart the "high drinkers" have few citizens that are very happy. 
+      But on the other hand so does Egypt which is a drinking country.
+      If we take a look at the state of health we see that the high drinking countries
+      have less citizens with good health, than the low drinking countries.
+      Even though alcohol has a lot of damaging effects on the body,
+      it could not be the only factor causing bad health, because the margins are not that big.
+      But it could be a big part of it.   
+    </p>
+  </div>
+  <div class="header">
+    <h2> Learning </h2>
+    <p>
+      From this task I have learnt a lot about D3 and how to create different visual structures.
+      My previous experience with JavaScript is limited, 
+      so to make the D3 visualizations has been a lot of work for me.
+      If I would have had more time then I would make the webpage look more pretty and also add animations to the visualizations.
+      There is also some bugs that I have not yet fixed, but if I have time later on I will fix them.  
+    </p>
   </div>
   <!-- D3 scripts-->
   <script src="http://d3js.org/d3.v4.min.js"></script>

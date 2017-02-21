@@ -29,6 +29,7 @@ p{
 .header{
   margin-left: 20px;
   align-items:center;
+  width: 40%;
 }
 
 img.resize{
