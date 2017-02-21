@@ -1,0 +1,38 @@
+﻿body {
+}
+
+p{
+  font-size:20px;
+}
+
+#listOfVariables {
+  margin-left: 20px;
+}
+
+#createBarchartButton{
+  margin-left: 20px;
+}
+
+.waveButton{
+  margin-left: 20px;
+  margin-right: 10px;
+}
+
+.waveContainer{
+  margin-bottom: 50px;
+}
+
+.svgText{
+  pointer-events:none
+}
+
+.header{
+  margin-left: 20px;
+  align-items:center;
+  width: 40%;
+}
+
+img.resize{
+  width : 110%;
+  height:auto;
+}

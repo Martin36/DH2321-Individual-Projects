@@ -1,0 +1,11 @@
+﻿body {
+  font: 10px sans-serif;
+}
+
+rect {
+  stroke: #000;
+}
+
+svg {
+  shape-rendering: crispEdges;
+}
