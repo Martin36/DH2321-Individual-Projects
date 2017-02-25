@@ -4,6 +4,8 @@ var dataArray = [];
 var countries = [];
 //Containing the countries with their data from Gapminder
 var countryObjects = [];
+//Array to hold any countries that has been removed from the last mapping i.e. if any of the old countries does not exist in the new data
+var oldCountryObjects = [];
 //Variable for checking if gapminder data is loaded
 var gapminderLoaded = false;
 //Arrays to hold selections
