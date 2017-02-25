@@ -89,9 +89,9 @@ function createAnimatedCountryBubbles() {
             $('#createBarchartButton input[name="barchartButton"]')
               .attr("disabled", false);
           }
-          //Move the bubble to the selected ones
-          moveSelectedBubbles();
         }
+        //Move the bubble to the selected ones
+        moveSelectedBubbles();
       })
       .on("mouseover", showDetail)
       .on("mouseout", hideDetail);
