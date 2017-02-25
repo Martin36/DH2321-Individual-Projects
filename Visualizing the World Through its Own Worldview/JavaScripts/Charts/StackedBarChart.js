@@ -1,10 +1,13 @@
-﻿//https://bl.ocks.org/mbostock/3886394
+﻿var data;
+var z = [];
+
+//https://bl.ocks.org/mbostock/3886394
 //Function for creating the stacked bar chart with the previously specified variables and countries
 function createBarChart() {
   //Clear the SVG if there already exists a var chart
   $("svg#stackedBarChart").empty();
   //The data that is to be used
-  var data = dataArray;
+  data = dataArray;
   //Filter countries
   for (var i in data) {
     data = filterCountries(data);
@@ -41,12 +44,13 @@ function createBarChart() {
   }
 
   //Create the color scale
-  var z = [];
+  z = [];
   for (var i = 0; i < selectedVariables.length; i++) {
     z[selectedVariables[i]] = colorScales[variablesArray.indexOf(selectedVariables[i])];
     //Map the colors to each category
     z[selectedVariables[i]].domain(Object.keys(data[0][selectedVariables[i]]));
   }
+
   //The stack variable will stack the rectangles on each other
   var stack = d3.stack()
       .offset(d3.stackOffsetExpand);
@@ -121,6 +125,17 @@ function createBarChart() {
       .attr("class", "axis axis--y")
       .call(d3.axisLeft(y).ticks(10, "%"));
 
+  createLegend(data);
+
+  //Show the "wave buttons"
+  if ($(".waveContainer").is(":hidden")) {
+    $(".waveContainer").toggle();
+  }
+}
+
+//Function for creating the legend that corresponds to the bar chart 
+function createLegend(data) {
+
   //Data for the legend
   var legendData = [];
   for (var key in data[0]) {
@@ -154,7 +169,7 @@ function createBarChart() {
 
   //Append header for the legend
   legend.append("text")
-      .attr("x", width - 24)
+      .attr("x", legendWidth - 24)
       .attr("y", 9.5)
       .attr("dy", "0.32em")
       .attr("transform", "translate(0, 0)")
@@ -189,7 +204,7 @@ function createBarChart() {
 
 
   rows.append("rect")
-      .attr("x", width - 19)
+      .attr("x", legendWidth - 19)
       .attr("width", 19)
       .attr("height", 19)
       .attr("fill", function (d) {
@@ -198,21 +213,17 @@ function createBarChart() {
       });
 
   rows.append("text")
-      .attr("x", width - 24)
+      .attr("x", legendWidth - 24)
       .attr("y", 9.5)
       .attr("dy", "0.32em")
       .text(function (d) { return d.name; });
 
   d3.select("svg#legend").append("text")
-      .attr("x", width - 24)
+      .attr("x", legendWidth - 24)
       .attr("y", 9.5)
       .attr("dy", "0.32em")
       .attr("transform", "translate(-1200, 40)")
       .attr("font-size", 30)
       .text("Selected Wave: " + selectedWave);
 
-  //Show the "wave buttons"
-  if ($(".waveContainer").is(":hidden")) {
-    $(".waveContainer").toggle();
-  }
 }

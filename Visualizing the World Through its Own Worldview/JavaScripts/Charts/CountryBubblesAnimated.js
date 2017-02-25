@@ -28,15 +28,7 @@ function createAnimatedCountryBubbles() {
   //Map the data to node elements
   var bubbles = chart.selectAll(".bubble")
     .data(newData, function (d) { return d.country; });
-  /*
-    .enter().append("g")
-      .attr("class", "node")
-      .attr("transform", function (d) {
-        //return "translate(" + Math.random() * 900 + "," + Math.random() * 900 + ")";
-        return "translate(" + d.x + "," + d.y + ")";
-        //return "translate(0, 0)";
-      });
-      */
+
   //Uses the data stored in node to create a circle
   var bubblesE = bubbles.enter().append("circle")
       .classed("bubble", true)
