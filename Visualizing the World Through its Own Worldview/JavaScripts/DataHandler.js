@@ -257,7 +257,7 @@ function loadGapminderData() {
       }
       gapminderLoaded = true;
       //createCountryBubbles();
-      createAnimatedCountryBubbles();
+      updateCountryBubbles();
       addMappingButtonListners();
     });
 }
