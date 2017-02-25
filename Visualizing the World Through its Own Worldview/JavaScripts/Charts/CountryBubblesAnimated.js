@@ -1,6 +1,11 @@
-﻿//https://github.com/vlandham/bubble_chart_v4
+﻿var bubbleColor = "#9e9ac8";
+
+//https://github.com/vlandham/bubble_chart_v4
 //Function for creating animated country bubbles (using force layout)
 function createAnimatedCountryBubbles() {
+  //Create the tooltip object
+  var tooltip = floatingTooltip('countries_tooltip', 240);
+
 
   //Creates the SVG element where the chart will be created
   var chart = d3.select("svg#countriesGrouped")
@@ -27,28 +32,8 @@ function createAnimatedCountryBubbles() {
   console.log(newData);
   //Map the data to node elements
   var bubbles = chart.selectAll(".bubble")
-    .data(newData, function (d) { return d.country; });
+    .data(newData, function (d) { return d.data.country; });
 
-  /*
- * Function called on mouseover to display the
- * details of a bubble in the tooltip.
- */
-  function showDetail(d) {
-    // change outline to indicate hover state.
-    d3.select(this).attr('stroke', 'black');
-
-    var content = '<span class="name">Title: </span><span class="value">' +
-                  d.name +
-                  '</span><br/>' +
-                  '<span class="name">Amount: </span><span class="value">$' +
-                  addCommas(d.value) +
-                  '</span><br/>' +
-                  '<span class="name">Year: </span><span class="value">' +
-                  d.year +
-                  '</span>';
-
-    tooltip.showTooltip(content, d3.event);
-  }
 
 
   //Uses the data stored in node to create a circle
@@ -56,8 +41,8 @@ function createAnimatedCountryBubbles() {
       .classed("bubble", true)
       .attr("country", function (d) { return d.data.country; })
       .attr("r", 0)
-      .style("fill", "#9e9ac8")
-      .attr('stroke', function (d) { return d3.rgb("#9e9ac8").darker(); })
+      .style("fill", bubbleColor)
+      .attr('stroke', function (d) { return d3.rgb(bubbleColor).darker(); })
       .on("click", function (d) {
         //Find index of the element
         var index = selectedCountries.indexOf(d.data.country);
@@ -85,8 +70,8 @@ function createAnimatedCountryBubbles() {
           }
         }
       })
-//      .on("mouseover", showDetail)
-//      .on("mouseout", hideDetail);
+      .on("mouseover", showDetail)
+      .on("mouseout", hideDetail);
 
   bubbles = bubbles.merge(bubblesE);
 
@@ -154,5 +139,38 @@ function createAnimatedCountryBubbles() {
         .text(function (d) { return d; });
   }
 
+/*
+* Function called on mouseover to display the
+* details of a bubble in the tooltip.
+*/
+  function showDetail(d) {
+    // change outline to indicate hover state.
+    d3.select(this).attr('stroke', 'black');
+
+    var content = '<span class="name">Country: </span><span class="value">' +
+                  d.data.country +
+                  '</span><br/>' +
+                  '<span class="name">' +
+                  selectedGapminderVariable +
+                  ': </span><span class="value">' +
+                  d.data[selectedGapminderVariable]["wave" + selectedWave] +
+                  '</span><br/>' +
+                  '<span class="name">Wave: </span><span class="value">' +
+                  selectedWave +
+                  '</span>';
+
+    tooltip.showTooltip(content, d3.event);
+  }
+
+/*
+ * Hides tooltip
+ */
+  function hideDetail(d) {
+    // reset outline
+    d3.select(this)
+      .attr('stroke', d3.rgb(bubbleColor).darker());
+
+    tooltip.hideTooltip();
+  }
 
 }
