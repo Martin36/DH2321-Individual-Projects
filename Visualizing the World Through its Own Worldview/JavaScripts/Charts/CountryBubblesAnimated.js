@@ -1,4 +1,5 @@
-﻿//Function for creating animated country bubbles (using force layout)
+﻿//https://github.com/vlandham/bubble_chart_v4
+//Function for creating animated country bubbles (using force layout)
 function createAnimatedCountryBubbles() {
 
   //Creates the SVG element where the chart will be created
@@ -41,7 +42,8 @@ function createAnimatedCountryBubbles() {
       .classed("bubble", true)
       .attr("country", function (d) { return d.data.country; })
       .attr("r", 0)
-      .style("fill", "rgb(158, 154, 200)")
+      .style("fill", "#9e9ac8")
+      .attr('stroke', function (d) { return d3.rgb("#9e9ac8").darker(); })
       .on("click", function (d) {
         //Find index of the element
         var index = selectedCountries.indexOf(d.data.country);
@@ -77,7 +79,7 @@ function createAnimatedCountryBubbles() {
   var center = { x: widthBubbles / 2, y: heightBubbles / 2 };
 
   function charge(d) {
-    return -forceStrength * Math.pow(d.radius, 2.0);
+    return -forceStrength * Math.pow(d.r, 2.0);
   }
 
   function ticked() {
@@ -89,7 +91,7 @@ function createAnimatedCountryBubbles() {
     .velocityDecay(0.2)
     .force('x', d3.forceX().strength(forceStrength).x(center.x))
     .force('y', d3.forceY().strength(forceStrength).y(center.y))
-    .force('charge', d3.forceManyBody().strength())
+    .force('charge', d3.forceManyBody().strength(charge))
     .on('tick', ticked);
   //forceSimulation() starts automatically which is not wanted in this case
   simulation.stop();
