@@ -2,19 +2,21 @@
 <meta charset="utf-8">
 <head>
   <link href="CSS/MyCSS.css" rel="stylesheet" />
-  
+
 </head>
 <body style="background-color: grey">
   <div class="header">
     <h1>Select which countries you want to compare</h1>
-    <h2 >
+    <h2>
       The size represents the <span id="gapminderMapping">GDP per capita</span> for each country
     </h2>
   </div>
   <svg id="countriesGrouped" width="1200" height="800"></svg>
   <div class="header">
-    <h1>Select with variable should be mapped to the size of the bubbles <br />
-     (WARINING: This will remove any selections made)</h1>
+    <h1>
+      Select with variable should be mapped to the size of the bubbles <br />
+      (WARINING: This will remove any selections made)
+    </h1>
   </div>
   <div class="gapDataContainer">
     <button id="gdpButton" class="waveButton">GDP Per Capita</button>
@@ -31,8 +33,8 @@
   </div>
   <div id="listOfVariables"></div>
   <div id="createBarchartButton"></div>
-  <svg id="legend" width="1400" height="200" ></svg>
-  <svg id="stackedBarChart" width="1400" height="500" ></svg>
+  <svg id="legend" width="1400" height="200"></svg>
+  <svg id="stackedBarChart" width="1400" height="500"></svg>
   <div class="waveContainer" style="display:none">
     <button id="wave3Button" class="waveButton">Wave 3 (1995 - 1999)</button>
     <button id="wave4Button" class="waveButton">Wave 4 (2000 - 2004)</button>
@@ -43,20 +45,20 @@
   <div class="header" id="analyticTrail1">
     <h1> Analytic trail 1</h1>
     <p>
-      My idea was to reasearch how citizens of different countries 
+      My idea was to reasearch how citizens of different countries
       considered them selves happy or not and if happiness was correlated with some other variables.
       I found some variables that I though would correlate a bit with the happiness the citizens felt.
-      In my visualization the user first selects the countries which are to be compared. 
+      In my visualization the user first selects the countries which are to be compared.
     </p>
-    <img class="" src="Images/BubbleChart.png"/>
+    <img class="" src="Images/BubbleChart.png" />
     <p>
       Then a set of variables are selected.
     </p>
     <img src="Images/ListOfVariables.png" />
     <p>
-      In the bar chart below we can compare the selected variables. 
+      In the bar chart below we can compare the selected variables.
       If we start by comparing the bars for "Feeling of happiness" and
-      "Satisfaction with your life" we see that they are correlated 
+      "Satisfaction with your life" we see that they are correlated
       (which may not have been such a big suprise).
     </p>
     <img src="Images/BarChart.png" />
@@ -68,35 +70,35 @@
   <div id="analyticTrail2" class="header">
     <h2> Analytic trail 2 </h2>
     <p>
-      In the second analytic trail I made use of the Gapminder data by mapping it to the "country bubbles". 
-      Since Gapminder has a lot of financial and health data, I took the opportunity to compare happiness to 
+      In the second analytic trail I made use of the Gapminder data by mapping it to the "country bubbles".
+      Since Gapminder has a lot of financial and health data, I took the opportunity to compare happiness to
       wealth and health. Here we see the alcohol consumption mapped to the size:
     </p>
     <img src="Images/BubbleChart_Alcohol.png" />
     <p>
-      My hypotesis was that this data was invered correlated to happiness and state of health. 
+      My hypotesis was that this data was invered correlated to happiness and state of health.
     </p>
     <img src="Images/BarChart2.png" />
     <p>
-      According to this bar chart the "high drinkers" have few citizens that are very happy. 
+      According to this bar chart the "high drinkers" have few citizens that are very happy.
       But on the other hand so does Egypt which is a drinking country.
       If we take a look at the state of health we see that the high drinking countries
       have less citizens with good health, than the low drinking countries.
       Even though alcohol has a lot of damaging effects on the body,
       it could not be the only factor causing bad health, because the margins are not that big.
-      But it could be a big part of it.   
+      But it could be a big part of it.
     </p>
   </div>
   <div id="learning" class="header">
     <h2> Learning </h2>
     <p>
       From this task I have learned a lot about D3 and how to create different visual structures.
-      My previous experience with JavaScript is limited, 
+      My previous experience with JavaScript is limited,
       so to make the D3 visualizations has been a lot of work for me.
       If I would have had more time then I would make the webpage look more pretty and also add animations to the visualizations.
-      There is also some bugs that I have not yet fixed, but if I have time later on I will fix them.  
+      There is also some bugs that I have not yet fixed, but if I have time later on I will fix them.
       <br />
-      But I have learned more that just the programming part. 
+      But I have learned more that just the programming part.
       I have also learned some intressting facts about the countries in the world.
     </p>
   </div>

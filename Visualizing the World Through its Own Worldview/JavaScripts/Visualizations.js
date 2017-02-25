@@ -6,33 +6,6 @@ var percentFormat = d3.format(".1%");
 var colorScales = [];
 addColors();
 
-//Function to update the country bubbles when a new Gapminder mapping is selected
-function updateCountryBubbles() {
-
-  //Filter the countries that exist in the current wave
-  var filteredCountryObjects = [];
-  for (var i = 0; i < countryObjects.length; i++) {
-    if (countries.indexOf(countryObjects[i].country) > -1) {
-      filteredCountryObjects.push(countryObjects[i]);
-    }
-  }
-
-  //Create the root node (needed for the pack function)
-  var root = d3.hierarchy({ children: filteredCountryObjects })
-    .sum(function (d) {
-      if (d[selectedGapminderVariable] != undefined) {
-        return d[selectedGapminderVariable]["wave" + selectedWave];    //Size mapped to the GDP of the country
-      }
-    });
-
-  //Map the data to node elements
-  var node = chart.selectAll(".node")
-    .data(pack(root).leaves())
-    .enter().append("g")
-      .attr("class", "node")
-      .attr("transform", function (d) { return "translate(" + d.x + "," + d.y + ")"; });
-
-}
 
 //Function for creating a list with checkboxes of variables where the user can select which ones they want to see
 function createListOfVariables() {

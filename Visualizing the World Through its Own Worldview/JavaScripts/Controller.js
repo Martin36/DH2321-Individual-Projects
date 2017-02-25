@@ -81,42 +81,42 @@ function addMappingButtonListners() {
     .on("click", function () {
       selectedGapminderVariable = gapminderDataVariables[0];
       selectedCountries = [];
-      createCountryBubbles();
+      updateCountryBubbles();
     });
   d3.select("button#alcoholButton")
     .on("click", function () {
       selectedGapminderVariable = gapminderDataVariables[1];
       selectedCountries = [];
-      createCountryBubbles();
+      updateCountryBubbles();
     });
   d3.select("button#bmiFemaleButton")
     .on("click", function () {
       selectedGapminderVariable = gapminderDataVariables[2];
       selectedCountries = [];
-      createCountryBubbles();
+      updateCountryBubbles();
     });
   d3.select("button#bmiMaleButton")
     .on("click", function () {
       selectedGapminderVariable = gapminderDataVariables[3];
       selectedCountries = [];
-      createCountryBubbles();
+      updateCountryBubbles();
     });
   d3.select("button#healthButton")
     .on("click", function () {
       selectedGapminderVariable = gapminderDataVariables[4];
       selectedCountries = [];
-      createCountryBubbles();
+      updateCountryBubbles();
     });
   d3.select("button#suicideButton")
     .on("click", function () {
       selectedGapminderVariable = gapminderDataVariables[5];
       selectedCountries = [];
-      createCountryBubbles();
+      updateCountryBubbles();
     });
   d3.select("button#warButton")
     .on("click", function () {
       selectedGapminderVariable = gapminderDataVariables[6];
       selectedCountries = [];
-      createCountryBubbles();
+      updateCountryBubbles();
     });
 }
