@@ -29,6 +29,28 @@ function createAnimatedCountryBubbles() {
   var bubbles = chart.selectAll(".bubble")
     .data(newData, function (d) { return d.country; });
 
+  /*
+ * Function called on mouseover to display the
+ * details of a bubble in the tooltip.
+ */
+  function showDetail(d) {
+    // change outline to indicate hover state.
+    d3.select(this).attr('stroke', 'black');
+
+    var content = '<span class="name">Title: </span><span class="value">' +
+                  d.name +
+                  '</span><br/>' +
+                  '<span class="name">Amount: </span><span class="value">$' +
+                  addCommas(d.value) +
+                  '</span><br/>' +
+                  '<span class="name">Year: </span><span class="value">' +
+                  d.year +
+                  '</span>';
+
+    tooltip.showTooltip(content, d3.event);
+  }
+
+
   //Uses the data stored in node to create a circle
   var bubblesE = bubbles.enter().append("circle")
       .classed("bubble", true)
@@ -62,7 +84,9 @@ function createAnimatedCountryBubbles() {
               .attr("disabled", false);
           }
         }
-      });
+      })
+//      .on("mouseover", showDetail)
+//      .on("mouseout", hideDetail);
 
   bubbles = bubbles.merge(bubblesE);
 
@@ -70,15 +94,6 @@ function createAnimatedCountryBubbles() {
   var forceStrength = 0.03;
   var center = { x: widthBubbles / 2, y: heightBubbles / 2 };
 
-  function charge(d) {
-    return -forceStrength * Math.pow(d.r, 2.0);
-  }
-
-  function ticked() {
-    bubbles
-      .attr('cx', function (d) { return d.x; })
-      .attr('cy', function (d) { return d.y; });
-  }
   var simulation = d3.forceSimulation()
     .velocityDecay(0.2)
     .force('x', d3.forceX().strength(forceStrength).x(center.x))
@@ -107,6 +122,25 @@ function createAnimatedCountryBubbles() {
       }
     })
 
+  //console.log(newData)
+  simulation.nodes(newData);
+
+  // @v4 Reset the 'x' force to draw the bubbles to the center.
+  simulation.force('x', d3.forceX().strength(forceStrength).x(center.x));
+
+  // @v4 We can reset the alpha value and restart the simulation
+  simulation.alpha(1).restart();
+
+  function charge(d) {
+    return -forceStrength * Math.pow(d.r, 2.0);
+  }
+
+  function ticked() {
+    bubbles
+      .attr('cx', function (d) { return d.x; })
+      .attr('cy', function (d) { return d.y; });
+  }
+
   function addText() {
     //Add text to the bubbles
     nodes.append("text")
@@ -119,14 +153,6 @@ function createAnimatedCountryBubbles() {
         .attr("y", function (d, i, nodes) { return 13 + (i - nodes.length / 2 - 0.5) * 10; })
         .text(function (d) { return d; });
   }
-  //console.log(newData)
-  simulation.nodes(newData);
-
-  // @v4 Reset the 'x' force to draw the bubbles to the center.
-  simulation.force('x', d3.forceX().strength(forceStrength).x(center.x));
-
-  // @v4 We can reset the alpha value and restart the simulation
-  simulation.alpha(1).restart();
 
 
 }
