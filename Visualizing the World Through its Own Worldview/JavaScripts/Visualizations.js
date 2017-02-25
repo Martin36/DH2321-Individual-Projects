@@ -1,12 +1,4 @@
-﻿//The dimensions of the SVG element of the grouped countries chart
-var widthBubbles = d3.select("svg#countriesGrouped").attr("width"),
-    heightBubbles = d3.select("svg#countriesGrouped").attr("height");
-
-//Create the pack layout
-var pack = d3.pack()
-  .size([widthBubbles, heightBubbles - 50])
-  .padding(1);
-
+﻿
 var percentFormat = d3.format(".1%");
 
 //Color scales

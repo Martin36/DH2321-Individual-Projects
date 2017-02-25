@@ -1,5 +1,22 @@
-﻿var bubbleColor = "#299cd1";
+﻿//The dimensions of the SVG element of the grouped countries chart
+var widthBubbles = d3.select("svg#countriesGrouped").attr("width"),
+    heightBubbles = d3.select("svg#countriesGrouped").attr("height");
+
+//Create the pack layout
+var pack = d3.pack()
+  .size([widthBubbles, heightBubbles - 50])
+  .padding(1);
+
+var bubbleColor = "#299cd1";
 var selectedColor = "#D6632E";
+
+// @v4 strength to apply to the position forces
+var forceStrength = 0.03;
+var center = { x: widthBubbles / 3, y: heightBubbles / 2 };
+
+var selectedCenter = { x: widthBubbles * (2 / 3), y: heightBubbles / 2 };
+
+
 
 //https://github.com/vlandham/bubble_chart_v4
 //Function for creating animated country bubbles (using force layout)
@@ -10,8 +27,7 @@ function createAnimatedCountryBubbles() {
 
   //Creates the SVG element where the chart will be created
   var chart = d3.select("svg#countriesGrouped")
-    .append("g")
-      .attr("transform", "translate(0,0)");
+    .append("g");
 
   //Filter the countries that exist in the current wave
   var filteredCountryObjects = [];
@@ -73,6 +89,8 @@ function createAnimatedCountryBubbles() {
             $('#createBarchartButton input[name="barchartButton"]')
               .attr("disabled", false);
           }
+          //Move the bubble to the selected ones
+          moveSelectedBubbles();
         }
       })
       .on("mouseover", showDetail)
@@ -80,9 +98,6 @@ function createAnimatedCountryBubbles() {
 
   bubbles = bubbles.merge(bubblesE);
 
-  // @v4 strength to apply to the position forces
-  var forceStrength = 0.03;
-  var center = { x: widthBubbles / 2, y: heightBubbles / 2 };
 
   var simulation = d3.forceSimulation()
     .velocityDecay(0.2)
@@ -94,7 +109,7 @@ function createAnimatedCountryBubbles() {
   simulation.stop();
 
   //Creates a force towards the middle
-  simulation.force('center', d3.forceCenter(widthBubbles / 2, heightBubbles / 2));
+//  simulation.force('center', d3.forceCenter(center.x, center.y));
 
 
   // Fancy transition to make bubbles appear, ending with the
@@ -167,9 +182,9 @@ function createAnimatedCountryBubbles() {
     tooltip.showTooltip(content, d3.event);
   }
 
-/*
- * Hides tooltip
- */
+
+
+  //Hides tooltip
   function hideDetail(d) {
     // reset outline
     d3.select(this)
@@ -178,4 +193,20 @@ function createAnimatedCountryBubbles() {
     tooltip.hideTooltip();
   }
 
+  //Function for moving bubbles when selected
+  function moveSelectedBubbles() {
+    // @v4 Reset the 'x' force to draw the bubbles to their year centers
+    simulation.force('x', d3.forceX().strength(forceStrength).x(function(d){
+      //Check if bubble is selected
+      if (selectedCountries.indexOf(d.data.country) >= 0) {
+        return selectedCenter.x;
+      } else {
+        return center.x;
+      }
+    }));
+
+    // @v4 We can reset the alpha value and restart the simulation
+    simulation.alpha(1).restart();
+
+  }
 }
