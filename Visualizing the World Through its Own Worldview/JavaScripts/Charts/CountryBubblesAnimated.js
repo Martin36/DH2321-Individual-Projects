@@ -1,4 +1,5 @@
-﻿var bubbleColor = "#9e9ac8";
+﻿var bubbleColor = "#299cd1";
+var selectedColor = "#D6632E";
 
 //https://github.com/vlandham/bubble_chart_v4
 //Function for creating animated country bubbles (using force layout)
@@ -42,7 +43,7 @@ function createAnimatedCountryBubbles() {
       .attr("country", function (d) { return d.data.country; })
       .attr("r", 0)
       .style("fill", bubbleColor)
-      .attr('stroke', function (d) { return d3.rgb(bubbleColor).darker(); })
+      .attr('stroke', d3.rgb(bubbleColor).darker())
       .on("click", function (d) {
         //Find index of the element
         var index = selectedCountries.indexOf(d.data.country);
@@ -51,7 +52,9 @@ function createAnimatedCountryBubbles() {
           //Remove the element from the array
           selectedCountries.splice(index, 1);
           //Set color back to normal
-          d3.select(this).style("fill", "rgb(158, 154, 200)");
+          d3.select(this)
+            .style("fill", bubbleColor)
+            .attr("stroke", d3.rgb(bubbleColor).darker());
           //Disable the create bar chart button if selectedCountries are empty
           if (selectedCountries.length == 0) {
             $('#createBarchartButton input[name="barchartButton"]')
@@ -62,7 +65,9 @@ function createAnimatedCountryBubbles() {
           //Add the selected country to an array
           selectedCountries.push(d.data.country);
           //Set color to red
-          d3.select(this).style("fill", "rgb(255, 0, 0)");
+          d3.select(this)
+            .style("fill", selectedColor)
+            .attr("stroke", d3.rgb(selectedColor).darker());
           //Enable the create bar chart button if a variable is selected
           if (selectedVariables.length != 0) {
             $('#createBarchartButton input[name="barchartButton"]')
