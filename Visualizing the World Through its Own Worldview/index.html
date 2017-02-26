@@ -5,11 +5,20 @@
 
 </head>
 <body style="background-color: grey">
-  <div class="header">
-    <h1>Select which countries you want to compare</h1>
-    <h2>
-      The size represents the <span id="gapminderMapping">GDP per capita</span> for each country
-    </h2>
+  <div class="wrapper">
+    <div class="header first">
+      <h1>Select which countries you want to compare</h1>
+      <h2>
+        The size represents the <span id="gapminderMapping">GDP per capita</span> for each country
+      </h2>
+    </div>
+    <div class="second">
+      <h2>Change the size mapping of the bubbles: </h2>
+      <select id="gapminderVariables">
+
+      </select>
+    </div>
+
   </div>
   <svg id="countriesGrouped" width="1200" height="800"></svg>
   <div class="header">

@@ -258,6 +258,7 @@ function loadGapminderData() {
       gapminderLoaded = true;
       //createCountryBubbles();
       updateCountryBubbles();
+      createDropdownItems();
       addMappingButtonListners();
     });
 }
@@ -268,4 +269,24 @@ function filterCountries(data) {
     return selectedCountries.indexOf(d.country) >= 0;
   });
   return newData;
+}
+
+//Function for creating the items in the dropdown list over the gapminder variables
+function createDropdownItems() {
+
+  var dropdown = d3.select("#gapminderVariables");
+  for (var i = 0; i < gapminderDataVariables.length; i++) {
+    dropdown.append("option")
+      .attr("value", gapminderDataVariables[i])
+      .html(gapminderDataVariables[i]);
+  }
+  //Add listener
+  $("#gapminderVariables").change(function () {
+    var dropdown = $("#gapminderVariables");
+    selectedGapminderVariable = dropdown.val();
+    selectedCountries = [];
+    updateCountryBubbles();
+  })
+    
+
 }

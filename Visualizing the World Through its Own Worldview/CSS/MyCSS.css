@@ -60,3 +60,14 @@ img.resize{
 .tooltip .name {
   font-weight:bold;
 }
+
+.wrapper {
+    overflow: hidden; /* will contain if #first is longer than #second */
+}
+.first {
+    width: 40%;
+    float:left; /* add this */
+}
+.second {
+    overflow: hidden; /* if you don't want #second to wrap below #first */
+}
