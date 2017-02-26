@@ -33,7 +33,7 @@ var gapminderDataVariables = [
   "Suicide indicator",
   "War mortality"
 ];
-var selectedGapminderVariable = "Indicator alcohol consumption";
+var selectedGapminderVariable = "GDP per capita";
 
 //Function for loading the data of the variables
 function loadData() {
@@ -284,6 +284,8 @@ function createDropdownItems() {
   $("#gapminderVariables").change(function () {
     var dropdown = $("#gapminderVariables");
     selectedGapminderVariable = dropdown.val();
+    //Set the text to the right variable
+    $("#gapminderMapping").html(selectedGapminderVariable);
     selectedCountries = [];
     updateCountryBubbles();
   })
