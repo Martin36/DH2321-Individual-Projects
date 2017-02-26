@@ -197,7 +197,6 @@ function updateCountryBubbles() {
   function showDetail(d) {
     // change outline to indicate hover state.
     d3.select(this).attr('stroke', 'black');
-
     var content = '<span class="name">Country: </span><span class="value">' +
                   d.data.country +
                   '</span><br/>' +
@@ -209,105 +208,6 @@ function updateCountryBubbles() {
                   '<span class="name">Wave: </span><span class="value">' +
                   selectedWave +
                   '</span>';
-
     tooltip.showTooltip(content, d3.event);
   }
-
 }
-/*
-//Function to update the country bubbles when a new Gapminder mapping is selected
-function updateCountryBubbles() {
-  //Save the old country objects
-  var oldCountryObjects = filteredCountryObjects;
-
-  //Filter the countries that exist in the current wave
-  var filteredCountryObjects = [];
-  for (var i = 0; i < countryObjects.length; i++) {
-    if (countries.indexOf(countryObjects[i].country) > -1) {
-      filteredCountryObjects.push(countryObjects[i]);
-    }
-  }
-
-  //Create the root node (needed for the pack function)
-  var root = d3.hierarchy({ children: filteredCountryObjects })
-    .sum(function (d) {
-      if (d[selectedGapminderVariable] != undefined) {
-        return d[selectedGapminderVariable]["wave" + selectedWave];    //Size mapped to the GDP of the country
-      }
-    });
-
-  var newData = pack(root).leaves().sort(function (a, b) { return b.r - a.r; });
-
-  //Map the data to node elements
-  bubbles = chart.selectAll(".bubble")
-    .data(newData, function (d) { return d.data.country; });
-
-  var t = d3.transition().duration(1000);
-
-  //UPDATE
-  bubbles
-      .attr("country", function (d) { return d.data.country; })
-    .transition(t)
-      .attr("r", function (d) { return d.r; });
-
-  //EXIT
-  bubbles.exit()
-    .transition(t)
-      .attr("r", function (d) { return d.r; })
-      .remove();
-
-  //ENTER
-  var bubblesE = bubbles.enter().append("circle")
-      .classed("bubble", true)
-      .attr("country", function (d) { return d.data.country; })
-      .attr("r", 0)
-      .style("fill", bubbleColor)
-      .attr('stroke', d3.rgb(bubbleColor).darker())
-      .on("click", function (d) {
-        //Find index of the element
-        var index = selectedCountries.indexOf(d.data.country);
-        //Check if country aleady is selected, otherwise we want to remove it
-        if (index >= 0) {
-          //Remove the element from the array
-          selectedCountries.splice(index, 1);
-          //Set color back to normal
-          d3.select(this)
-            .style("fill", bubbleColor)
-            .attr("stroke", d3.rgb(bubbleColor).darker());
-          //Disable the create bar chart button if selectedCountries are empty
-          if (selectedCountries.length == 0) {
-            $('#createBarchartButton input[name="barchartButton"]')
-              .attr("disabled", true);
-          }
-        }
-        else {
-          //Add the selected country to an array
-          selectedCountries.push(d.data.country);
-          //Set color to red
-          d3.select(this)
-            .style("fill", selectedColor)
-            .attr("stroke", d3.rgb(selectedColor).darker());
-          //Enable the create bar chart button if a variable is selected
-          if (selectedVariables.length != 0) {
-            $('#createBarchartButton input[name="barchartButton"]')
-              .attr("disabled", false);
-          }
-        }
-        //Move the bubble to the selected ones
-        moveSelectedBubbles();
-      })
-    //  .on("mouseover", showDetail)
-    //  .on("mouseout", hideDetail);
-
-  bubbles = bubbles.merge(bubblesE);
-
-  simulation.nodes(newData);
-
-  // @v4 Reset the 'x' force to draw the bubbles to the center.
-  simulation.force('x', d3.forceX().strength(forceStrength).x(center.x));
-
-  // @v4 We can reset the alpha value and restart the simulation
-  simulation.alpha(1).restart();
-
-}
-*/

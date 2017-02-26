@@ -329,18 +329,6 @@ function fixData(error, feelings, family, satisfaction, work, firstChoice, trust
   } else {
     dataLoadedCheck = true;
   }
-  /*
-  //Check if the bar chart should be updated
-  if (selectedCountries.length > 0 && selectedVariables.length > 0) {
-    createBarChart();
-  }
-  //Load the gapminder data if it is not loaded yet
-  if (!gapminderLoaded) {
-    loadGapminderData();
-  } else {
-    createCountryBubbles();
-  }
-  */
 };
 
 //Use to read the data from gapminder
@@ -425,9 +413,12 @@ function createDropdownItems() {
   for (var i = 3; i < 7; i++) {
     var startYear = 1980 + i * 5;
     var endYear = startYear + 4;
-    dropdownWave.append("option")
+    var elem = dropdownWave.append("option")
       .attr("value", i)
       .html("Wave " + i + " (" + startYear + "-" + endYear + ")");
+    if (i == selectedWave) {
+      elem.attr("selected", true);
+    }
   }
   $("#waves").change(function () {
     var dropdown = $("#waves");
