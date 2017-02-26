@@ -30,7 +30,7 @@ var bubbles;
 function updateCountryBubbles() {
   //Create the tooltip object
   var tooltip = floatingTooltip('countries_tooltip', 240);
-
+  selectedCountries = [];
   //Filter the countries that exist in the current wave
   var filteredCountryObjects = [];
   for (var i = 0; i < countryObjects.length; i++) {
@@ -59,6 +59,8 @@ function updateCountryBubbles() {
   //UPDATE
   bubbles
       .attr("country", function (d) { return d.data.country; })
+      .style("fill", bubbleColor)
+      .attr("stroke", d3.rgb(bubbleColor).darker())
     .transition(t)
       .attr("r", function (d) { return d.r; });
 
@@ -127,15 +129,6 @@ function updateCountryBubbles() {
   //forceSimulation() starts automatically which is not wanted in this case
   simulation.stop();
 
-  // Fancy transition to make bubbles appear, ending with the
-  // correct radius
-  /*
-  var transitions = 0;
-  bubbles.transition()
-    .duration(2000)
-    .attr('r', function (d) { return d.r; });
-    */
-  //console.log(newData)
   simulation.nodes(newData);
 
   // @v4 Reset the 'x' force to draw the bubbles to the center.

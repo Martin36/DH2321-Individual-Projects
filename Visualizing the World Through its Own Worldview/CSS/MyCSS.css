@@ -1,4 +1,5 @@
 ﻿body {
+  background-color: lightgray;
 }
 
 p{
@@ -62,6 +63,7 @@ img.resize{
 }
 
 .wrapper {
+    /*background-color:;*/
     overflow: hidden; /* will contain if #first is longer than #second */
 }
 .first {
