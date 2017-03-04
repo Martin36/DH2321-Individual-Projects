@@ -46,9 +46,28 @@ function createBarChart() {
   //Create the color scale
   z = [];
   for (var i = 0; i < selectedVariables.length; i++) {
+    var variableRemoved = false;
+    var counter = 0;
+    var dataObj = data[counter];
     z[selectedVariables[i]] = colorScales[variablesArray.indexOf(selectedVariables[i])];
-    //Map the colors to each category
-    z[selectedVariables[i]].domain(Object.keys(data[0][selectedVariables[i]]));
+
+    //This needs to be done if the first object in the data array does not have the
+    //selected variable. Check when counter is equal to data.length then none of the
+    //selected countries has the selected variable
+    while(dataObj[selectedVariables[i]] == null && counter <= data.length){
+      if(counter == data.length){
+        //Remove the selected variable
+        delete z[selectedVariables[i]];
+        delete selectedVariables[i];
+        variableRemoved = true;
+        break;
+      }
+      dataObj = data[++counter];
+    }
+    if(!variableRemoved){
+      //Map the colors to each category
+      z[selectedVariables[i]].domain(Object.keys(dataObj[selectedVariables[i]]));
+    }
   }
 
   //The stack variable will stack the rectangles on each other
