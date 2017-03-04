@@ -20,6 +20,15 @@
       <select id="waves"></select>
 
     </div>
+    <div class="third">
+      <div class="header">
+        <h2>Select which variables to compare the countries by</h2>
+      </div>
+      <div id="listOfVariables"></div>
+      <div id="createBarchartButton"></div>
+    </div>
+
+
   </div>
   <svg id="countriesGrouped" width="1200" height="800"></svg>
   <!--
@@ -39,19 +48,16 @@
     <button id="warButton" class="waveButton">War Mortality</button>
   </div>
   -->
-  <div class="header">
-    <h1>Select which variables to compare the countries by</h1>
-  </div>
-  <div id="listOfVariables"></div>
-  <div id="createBarchartButton"></div>
   <svg id="legend" width="1400" height="200"></svg>
   <svg id="stackedBarChart" width="1400" height="500"></svg>
+  <!--
   <div class="waveContainer" style="display:none">
     <button id="wave3Button" class="waveButton">Wave 3 (1995 - 1999)</button>
     <button id="wave4Button" class="waveButton">Wave 4 (2000 - 2004)</button>
     <button id="wave5Button" class="waveButton">Wave 5 (2005 - 2009)</button>
     <button id="wave6Button" class="waveButton">Wave 6 (2010 - 2014)</button>
   </div>
+  -->
   <!-- The first analytic trail -->
   <div class="header" id="analyticTrail1">
     <h1> Analytic trail 1</h1>
@@ -125,7 +131,7 @@
   <script src="JavaScripts/Charts/CountryBubblesAnimated.js"></script>
   <script src="JavaScripts/Charts/StackedBarChart.js"></script>
 
-  <script src="JavaScripts/DataStatistics.js"></script>
+  <script src="JavaScripts/dataStatistics.js"></script>
   <script src="JavaScripts/DataHandler.js"></script>
   <script src="JavaScripts/Controller.js"></script>
   <script src="JavaScripts/Visualizations.js"></script>

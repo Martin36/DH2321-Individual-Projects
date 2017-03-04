@@ -67,9 +67,14 @@ img.resize{
     overflow: hidden; /* will contain if #first is longer than #second */
 }
 .first {
-    width: 40%;
+    width: 30%;
     float:left; /* add this */
 }
 .second {
+    width: 25%;
+    float: left;
     overflow: hidden; /* if you don't want #second to wrap below #first */
+}
+.third {
+    overflow: hidden;
 }
