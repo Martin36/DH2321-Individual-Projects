@@ -16,8 +16,6 @@ var center = { x: widthBubbles / 3, y: heightBubbles / 2 };
 
 var selectedCenter = { x: widthBubbles * (2 / 3), y: heightBubbles / 2 };
 
-var filteredCountryObjects = [];
-
 var simulation;
 //Creates the SVG element where the chart will be created
 var chart = d3.select("svg#countriesGrouped")
@@ -31,6 +29,11 @@ function updateCountryBubbles() {
   //Create the tooltip object
   var tooltip = floatingTooltip('countries_tooltip', 240);
   selectedCountries = [];
+
+  //Disable the create barchart button
+  d3.select("#createBarchartButton")
+    .attr("disabled", true);
+
   //Filter the countries that exist in the current wave
   var filteredCountryObjects = [];
   for (var i = 0; i < countryObjects.length; i++) {

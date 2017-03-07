@@ -25,7 +25,7 @@ function createListOfVariables() {
           selectedVariables.push(this.value);
           //Enable button if any countries are selected
           if (selectedCountries != 0) {
-            $('#createBarchartButton input[name="barchartButton"]')
+            $('#createBarchartButton')
                .attr("disabled", false);
           }
         } else {
@@ -36,7 +36,7 @@ function createListOfVariables() {
           }
           //Disable button if selectedVariables if empty
           if (selectedVariables == 0) {
-            $('#createBarchartButton input[name="barchartButton"]')
+            $('#createBarchartButton')
                .attr("disabled", true);
           }
         }
