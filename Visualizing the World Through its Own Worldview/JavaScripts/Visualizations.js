@@ -25,7 +25,7 @@ function createListOfVariables() {
           selectedVariables.push(this.value);
           //Enable button if any countries are selected
           if (selectedCountries != 0) {
-            $('#createBarchartButton')
+            $("#barchart-button")
                .attr("disabled", false);
           }
         } else {
@@ -36,7 +36,7 @@ function createListOfVariables() {
           }
           //Disable button if selectedVariables if empty
           if (selectedVariables == 0) {
-            $('#createBarchartButton')
+            $("#barchart-button")
                .attr("disabled", true);
           }
         }
@@ -53,6 +53,7 @@ function createListOfVariables() {
   //Add a button for creating the bar chart
   d3.select("#createBarchartButton").append("input")
     .attr("name", "barchartButton")
+    .attr("id", "barchart-button")
     .attr("value", "Create Bar Chart")
     .attr("type", "button")
     .attr("disabled", true)
