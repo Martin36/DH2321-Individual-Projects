@@ -1,24 +1,19 @@
 ﻿body {
   background-color: lightgray;
 }
-
-p{
-  font-size:20px;
-}
-
-#listOfVariables {
-  margin-left: 20px;
-}
-
 #createBarchartButton{
   margin-left: 20px;
 }
-
+#listOfVariables {
+  margin-left: 20px;
+}
+p{
+  font-size:20px;
+}
 .waveButton{
   margin-left: 20px;
   margin-right: 10px;
 }
-
 .waveContainer{
   margin-bottom: 50px;
 }
