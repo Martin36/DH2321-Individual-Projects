@@ -10,6 +10,57 @@ addColors();
 //Function for creating a list with checkboxes of variables where the user can select which ones they want to see
 function createListOfVariables() {
 
+  //Select the select
+  var select = d3.select("#listOfVariables");
+
+  //Create an checkbox element for each variable
+  for (var i = 0; i < variablesArray.length; i++) {
+    //Create option for each variable
+    select.append("option")
+      .attr("value", variablesArray[i])
+      .html(variablesArray[i]);
+
+    //This function is called when the checkbox is clicked
+    function addVariable() {
+      if (this.checked) {
+        //Add the variable to the selected ones
+        selectedVariables.push(this.value);
+        //Enable button if any countries are selected
+        if (selectedCountries != 0) {
+          $("#barchart-button")
+            .attr("disabled", false);
+        }
+      } else {
+        //Remove the variable from the selected ones
+        var index = selectedVariables.indexOf(this.value);
+        if (index >= 0) {
+          selectedVariables.splice(index, 1);
+        }
+        //Disable button if selectedVariables if empty
+        if (selectedVariables == 0) {
+          $("#barchart-button")
+            .attr("disabled", true);
+        }
+      }
+    }
+
+
+
+  }
+  //Add a button for creating the bar chart
+  d3.select("#createBarchartButton").append("input")
+    .attr("name", "barchartButton")
+    .attr("id", "barchart-button")
+    .attr("value", "Create Bar Chart")
+    .attr("type", "button")
+    .attr("disabled", true)
+    .on("click", function () {
+      createBarChart(dataArray);
+    })
+
+}
+//Function for creating a list with checkboxes of variables where the user can select which ones they want to see
+function createListOfVariables2() {
   //Create an checkbox element for each variable
   for (var i = 0; i < variablesArray.length; i++) {
     //Select the correct div
@@ -26,7 +77,7 @@ function createListOfVariables() {
           //Enable button if any countries are selected
           if (selectedCountries != 0) {
             $("#barchart-button")
-               .attr("disabled", false);
+              .attr("disabled", false);
           }
         } else {
           //Remove the variable from the selected ones
@@ -37,7 +88,7 @@ function createListOfVariables() {
           //Disable button if selectedVariables if empty
           if (selectedVariables == 0) {
             $("#barchart-button")
-               .attr("disabled", true);
+              .attr("disabled", true);
           }
         }
       })

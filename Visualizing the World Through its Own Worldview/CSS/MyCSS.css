@@ -14,17 +14,22 @@
   display: inline-flex;
   width: 100%;
   min-height: 100px;
-  background-color: #299cd1;
+  background-color: #196386;
   color: white;
   padding: 20px;
   font-family: berkshire;
+  box-shadow: 0 0 10px 2px #000;
 }
+#header-bar > div{
+  margin-left: 20px;
+}
+#header-bar select{
+  color: #333;
+}
+
 img.resize{
   width : 110%;
   height:auto;
-}
-#listOfVariables {
-  margin-left: 20px;
 }
 p{
   font-size:20px;

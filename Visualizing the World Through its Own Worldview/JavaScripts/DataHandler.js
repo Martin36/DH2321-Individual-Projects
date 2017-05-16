@@ -399,14 +399,17 @@ function createDropdownItems() {
       .html(gapminderDataVariables[i]);
   }
   //Add listener
-  $("#gapminderVariables").change(function () {
+  var gapVars = $("#gapminderVariables");
+  gapVars.change(function () {
     var dropdown = $("#gapminderVariables");
     selectedGapminderVariable = dropdown.val();
     //Set the text to the right variable
     $("#gapminderMapping").html(selectedGapminderVariable);
     selectedCountries = [];
     updateCountryBubbles();
-  })
+  });
+  //Update the selectpicker
+  gapVars.selectpicker('refresh');
   
   //Create the elements in the waves array
   var dropdownWave = d3.select("#waves");
@@ -420,13 +423,16 @@ function createDropdownItems() {
       elem.attr("selected", true);
     }
   }
-  $("#waves").change(function () {
+  var waves = $("#waves");
+  waves.change(function () {
     var dropdown = $("#waves");
     selectedWave = dropdown.val();
     $("#waveMapping").html(selectedWave);
     dataArray = dataObj[selectedWave - 3];
     updateCountryBubbles();
   })
+  //Update the selectpicker
+  waves.selectpicker('refresh');
 
 
 }

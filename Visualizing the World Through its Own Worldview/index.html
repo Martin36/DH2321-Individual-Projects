@@ -2,7 +2,12 @@
 <meta charset="utf-8">
 <head>
   <!-- Bootstrap -->
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+        integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
+        crossorigin="anonymous">
+
+  <!-- Bootstrap-select -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.2/css/bootstrap-select.min.css">
 
   <link href="CSS/MyCSS.css" rel="stylesheet" />
 
@@ -13,6 +18,18 @@
     <div id="title">
       <h1>WVS Visualization</h1>
       <h2>What conditions effect our happiness?</h2>
+    </div>
+    <div id="bubble-mapping">
+      <h4>Change the size mapping of the bubbles:</h4>
+      <select id="gapminderVariables" class="selectpicker"></select>
+    </div>
+    <div id="wave-mapping">
+      <h4>Change the year period to be displayed: </h4>
+      <select id="waves" class="selectpicker"></select>
+    </div>
+    <div id="variables">
+      <h4>Select which variables to compare the countries by</h4>
+      <select id="listOfVariables" class="selectpicker" multiple></select>
     </div>
   </div>
 
@@ -25,17 +42,11 @@
       </h2>
     </div>
     <div class="second">
-      <h2>Change the size mapping of the bubbles: </h2>
-      <select id="gapminderVariables"></select>
-      <h2>Change the year period to be displayed: </h2>
-      <select id="waves"></select>
 
     </div>
     <div class="third">
       <div class="header">
-        <h2>Select which variables to compare the countries by</h2>
       </div>
-      <div id="listOfVariables"></div>
       <div id="createBarchartButton"></div>
     </div>
   </div>
@@ -55,6 +66,9 @@
           integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
           crossorigin="anonymous"></script>
 
+  <!-- Bootstrap-select -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.2/js/bootstrap-select.min.js"></script>
+
   <!-- My Scripts-->
   <!-- Scripts for creating the charts -->
   <script src="JavaScripts/Charts/Tooltip.js"></script>
@@ -67,5 +81,4 @@
   <script src="JavaScripts/Controller.js"></script>
   <script src="JavaScripts/Visualizations.js"></script>
   <script src="JavaScripts/Main.js"></script>
-
 </body>
