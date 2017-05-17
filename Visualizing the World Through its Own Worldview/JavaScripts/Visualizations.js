@@ -49,7 +49,6 @@ function createListOfVariables() {
       $("#barchart-button")
         .attr("disabled", true);
     }
-    console.log(selectedVariables);
   }
   //Add a button for creating the bar chart
   d3.select("#createBarchartButton").append("input")
