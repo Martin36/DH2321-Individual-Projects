@@ -54,6 +54,10 @@ function createBarChart() {
     //This needs to be done if the first object in the data array does not have the
     //selected variable. Check when counter is equal to data.length then none of the
     //selected countries has the selected variable
+    if(dataObj == undefined){
+      console.log("Data object is undefined");
+      continue;
+    }
     while(dataObj[selectedVariables[i]] == null && counter <= data.length){
       if(counter == data.length){
         //Remove the selected variable
@@ -161,9 +165,10 @@ function createLegend(data) {
       legendData[legendData.length - 1].name = key;
     }
   }
+
   console.log(legendData);
   var legendWidth = d3.select("svg#legend").attr("width");
-
+/*
   var legendScale = d3.scaleOrdinal()
     .range(z["Important in life: Work"].range())
     .domain(legendData.map(function (d) {
@@ -171,7 +176,7 @@ function createLegend(data) {
         return d != "name";
       });
     })[0]);
-
+*/
 
   $("svg#legend").empty();
 /*
@@ -186,6 +191,44 @@ function createLegend(data) {
       return d.name;
     });
 */
+  //Create the d3 legend
+  var legend = d3.legendColor()
+    .shapeWidth(50)
+    .shapePadding(5)
+    .orient('horizontal')
+    .labelWrap(40);
+
+  d3.select("svg#legend")
+    .selectAll("g")
+    .data(legendData.map(function (d) {
+      var colorScale = z[d.name];
+      var name = d.name;
+      delete d.name;
+      var keys = Object.keys(d);
+      var data = {
+        name : name,
+        keys : keys,
+        colors : colorScale.range()
+      };
+      return data;
+    }))
+    .enter()
+    .append("g")
+    .attr("class", "legendLinear")
+    .attr("transform", function (d, i) {
+      return "translate(20," + (20 + 100*i) + ")";
+    })
+    .each(function (d, i) {
+      //console.log(d);
+      legend
+        .title(d.name)
+        .scale(d3.scaleOrdinal()
+          .range(d.colors)
+          .domain(d.keys));
+      d3.select(this)
+        .call(legend);
+    });
+/*
   //Create a d3 legend
   var legend = d3.legendColor()
     .title(legendData[0].name)
@@ -195,11 +238,8 @@ function createLegend(data) {
     .labelWrap(40)
     .scale(legendScale);
 
-  d3.select("svg#legend").append("g")
-    .attr("class", "legendLinear")
-    .attr("transform", "translate(20,20)")
     .call(legend);
-
+*/
   /*
 
   //Then create a group element for each bar
