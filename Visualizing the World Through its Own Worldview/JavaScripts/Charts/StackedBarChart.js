@@ -1,6 +1,6 @@
 ﻿var data;
 var z = [];
-
+var textWidth = 100;
 //https://bl.ocks.org/mbostock/3886394
 //Function for creating the stacked bar chart with the previously specified variables and countries
 function createBarChart() {
@@ -152,8 +152,99 @@ function createBarChart() {
   }
 }
 
-//Function for creating the legend that corresponds to the bar chart 
 function createLegend(data) {
+  //Data for the legend
+  var legendData = [];
+  for (var key in data[0]) {
+    if (selectedVariables.indexOf(key) > -1) {
+      legendData.push(data[0][key]);
+      legendData[legendData.length - 1].name = key;
+    }
+  }
+  console.log(legendData);
+  var legendWidth = d3.select("svg#legend").attr("width");
+
+  var legendScale = d3.scaleOrdinal()
+    .range(z["Important in life: Work"].range())
+    .domain(legendData.map(function (d) {
+      return Object.keys(d).filter(function (d) {
+        return d != "name";
+      });
+    })[0]);
+
+
+  $("svg#legend").empty();
+/*
+  //Append header for the legend
+  d3.select("svg#legend").append("text")
+    .attr("x", legendWidth - 24)
+    .attr("y", 9.5)
+    .attr("dy", "0.32em")
+    .attr("transform", "translate(0, 0)")
+    .attr("font-size", 15)
+    .text(function (d) {
+      return d.name;
+    });
+*/
+  //Create a d3 legend
+  var legend = d3.legendColor()
+    .title(legendData[0].name)
+    .shapeWidth(50)
+    .shapePadding(5)
+    .orient('horizontal')
+    .labelWrap(40)
+    .scale(legendScale);
+
+  d3.select("svg#legend").append("g")
+    .attr("class", "legendLinear")
+    .attr("transform", "translate(20,20)")
+    .call(legend);
+
+  /*
+
+  //Then create a group element for each bar
+  var rows = legend.selectAll("g")
+    .data(function (d) {
+      var colorScale = z[d.name];
+      delete d.name;
+      var keys = Object.keys(d);
+      var newData = [];
+      var dataObj;
+      for (var i = 0; i < keys.length; i++) {
+        dataObj = {
+          name: keys[i],
+          color: colorScale(keys[i])
+        };
+        newData.push(dataObj);
+      }
+      return newData;
+    })
+    .enter().append("g")
+    .attr("transform", function (d, i) {
+      return "translate(0," + (20 + i * 20) + ")";
+    });
+
+
+  rows.append("rect")
+    .attr("x", legendWidth - 19)
+    .attr("width", 19)
+    .attr("height", 19)
+    .attr("fill", function (d) {
+      return d.color;
+    });
+
+  //Add labels to the legend
+  rows.append("text")
+    .attr("x", legendWidth - 24)
+    .attr("y", 9.5)
+    .attr("dy", "0.32em")
+    .text(function (d) { return d.name; })
+    .call(wrap, textWidth);
+    */
+}
+
+//Function for creating the legend that corresponds to the bar chart 
+function createLegend2(data) {
 
   //Data for the legend
   var legendData = [];
@@ -209,15 +300,13 @@ function createLegend(data) {
         dataObj = {
           name: keys[i],
           color: colorScale(keys[i])
-        }
+        };
         newData.push(dataObj);
       }
-      //      console.log(newData);
       return newData;
     })
     .enter().append("g")
       .attr("transform", function (d, i) {
-        //  console.log(d);
         return "translate(0," + (20 + i * 20) + ")";
       });
 
@@ -227,16 +316,18 @@ function createLegend(data) {
       .attr("width", 19)
       .attr("height", 19)
       .attr("fill", function (d) {
-        //     console.log(d);
         return d.color;
       });
 
+  //Add labels to the legend
   rows.append("text")
       .attr("x", legendWidth - 24)
       .attr("y", 9.5)
       .attr("dy", "0.32em")
-      .text(function (d) { return d.name; });
+      .text(function (d) { return d.name; })
+      .call(wrap, textWidth);
 
+  //Add text indication which wave is selected
   d3.select("svg#legend").append("text")
       .attr("x", legendWidth - 24)
       .attr("y", 9.5)
@@ -245,4 +336,29 @@ function createLegend(data) {
       .attr("font-size", 30)
       .text("Selected Wave: " + selectedWave);
 
+}
+//https://bl.ocks.org/mbostock/7555321
+function wrap(text, width) {
+  text.each(function() {
+    var text = d3.select(this),
+      words = text.text().split(/\s+/).reverse(),
+      word,
+      line = [],
+      lineNumber = 0,
+      lineHeight = 1.1, // ems
+      y = text.attr("y"),
+      x = text.attr("x"),
+      dy = parseFloat(text.attr("dy")),
+      tspan = text.text(null).append("tspan").attr("x", x).attr("y", y).attr("dy", dy + "em");
+    while (word = words.pop()) {
+      line.push(word);
+      tspan.text(line.join(" "));
+      if (tspan.node().getComputedTextLength() > width) {
+        line.pop();
+        tspan.text(line.join(" "));
+        line = [word];
+        tspan = text.append("tspan").attr("x", x).attr("y", y).attr("dy", ++lineNumber * lineHeight + dy + "em").text(word);
+      }
+    }
+  });
 }
