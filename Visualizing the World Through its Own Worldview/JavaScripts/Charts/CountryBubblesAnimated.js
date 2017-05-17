@@ -16,8 +16,8 @@ var continents = [
   "South America"
 ];
 
-var bubbleColor = "#299cd1";
-var bubbleChartColors = ['#ff5252', '#ffd452', '#52ff52', '#52ffff', '#5252ff', '#ff527d'];
+//var bubbleColor = "#299cd1";
+var bubbleChartColors = ['#52ffff', '#ff5252','#52ff52', '#ffd452',  '#5252ff', '#ff527d'];
 var colors = d3.scaleOrdinal(bubbleChartColors);
 colors.domain(continents);
 var selectedColor = "#D6632E";
@@ -73,9 +73,14 @@ function updateCountryBubbles() {
 
   //UPDATE
   bubbles
-      .attr("country", function (d) { return d.data.country; })
-      .style("fill", bubbleColor)
-      .attr("stroke", d3.rgb(bubbleColor).darker())
+    .attr("country", function (d) { return d.data.country; })
+    .style("fill", function (d) {
+      return colors(d.data.continent);
+      })
+    .attr('stroke', function (d) {
+      var bubbleColor = colors(d.data.continent);
+      return d3.rgb(bubbleColor).darker();
+    })
     .transition(t)
       .attr("r", function (d) { return d.r; });
 
@@ -94,7 +99,10 @@ function updateCountryBubbles() {
       .style("fill", function (d) {
         return colors(d.data.continent);
       })
-      .attr('stroke', d3.rgb(bubbleColor).darker())
+      .attr('stroke', function (d) {
+        var bubbleColor = colors(d.data.continent);
+        return d3.rgb(bubbleColor).darker();
+      })
       .on("click", function (d) {
         //Find index of the element
         var index = selectedCountries.indexOf(d.data.country);
@@ -104,8 +112,13 @@ function updateCountryBubbles() {
           selectedCountries.splice(index, 1);
           //Set color back to normal
           d3.select(this)
-            .style("fill", bubbleColor)
-            .attr("stroke", d3.rgb(bubbleColor).darker());
+            .style("fill", function (d) {
+              return colors(d.data.continent);
+            })
+            .attr("stroke", function (d) {
+              var bubbleColor = colors(d.data.continent);
+              return d3.rgb(bubbleColor).darker();
+            });
           //Disable the create bar chart button if selectedCountries are empty
           if (selectedCountries.length == 0) {
             $('#createBarchartButton input[name="barchartButton"]')
@@ -115,7 +128,7 @@ function updateCountryBubbles() {
         else {
           //Add the selected country to an array
           selectedCountries.push(d.data.country);
-          //Set color to red
+          //Change color to selected
           d3.select(this)
             .style("fill", selectedColor)
             .attr("stroke", d3.rgb(selectedColor).darker());
@@ -176,14 +189,19 @@ function updateCountryBubbles() {
         .text(function (d) { return d; });
   }
 
-
-
-
   //Hides tooltip
   function hideDetail(d) {
     // reset outline
     d3.select(this)
-      .attr('stroke', d3.rgb(bubbleColor).darker());
+      .attr('stroke', function (d) {
+        //Check if county is selected or not
+        if(selectedCountries.indexOf(d.data.country) == -1){
+          var bubbleColor = colors(d.data.continent);
+          return d3.rgb(bubbleColor).darker();
+        }else{
+          return d3.rgb(selectedColor).darker();
+        }
+      });
 
     tooltip.hideTooltip();
   }
