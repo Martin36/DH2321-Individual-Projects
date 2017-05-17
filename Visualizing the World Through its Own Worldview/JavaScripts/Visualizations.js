@@ -58,6 +58,7 @@ function createListOfVariables() {
     .attr("value", "Create Bar Chart")
     .attr("type", "button")
     .attr("disabled", true)
+    .attr("class", "btn btn-info")
     .on("click", function () {
       createBarChart(dataArray);
     })
