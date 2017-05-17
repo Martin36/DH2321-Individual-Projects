@@ -132,6 +132,7 @@ function createBarChart() {
      	  //Calculate the part of space that this rectangle takes 
      	  var part = (d[0][1] - d[0][0]);
      	  tooltip.text(d.key + ": " + percentFormat(part));
+          //.call(wrap, 50); //TODO: Make the line wrap work
      	  return tooltip.style("visibility", "visible");
      	})
 	    .on("mousemove", function () { return tooltip.style("top", (d3.event.pageY - 10) + "px").style("left", (d3.event.pageX + 10) + "px"); })
@@ -166,31 +167,10 @@ function createLegend(data) {
     }
   }
 
-  console.log(legendData);
   var legendWidth = d3.select("svg#legend").attr("width");
-/*
-  var legendScale = d3.scaleOrdinal()
-    .range(z["Important in life: Work"].range())
-    .domain(legendData.map(function (d) {
-      return Object.keys(d).filter(function (d) {
-        return d != "name";
-      });
-    })[0]);
-*/
 
   $("svg#legend").empty();
-/*
-  //Append header for the legend
-  d3.select("svg#legend").append("text")
-    .attr("x", legendWidth - 24)
-    .attr("y", 9.5)
-    .attr("dy", "0.32em")
-    .attr("transform", "translate(0, 0)")
-    .attr("font-size", 15)
-    .text(function (d) {
-      return d.name;
-    });
-*/
+
   //Create the d3 legend
   var legend = d3.legendColor()
     .shapeWidth(50)
@@ -228,62 +208,10 @@ function createLegend(data) {
       d3.select(this)
         .call(legend);
     });
-/*
-  //Create a d3 legend
-  var legend = d3.legendColor()
-    .title(legendData[0].name)
-    .shapeWidth(50)
-    .shapePadding(5)
-    .orient('horizontal')
-    .labelWrap(40)
-    .scale(legendScale);
-
-    .call(legend);
-*/
-  /*
-
-  //Then create a group element for each bar
-  var rows = legend.selectAll("g")
-    .data(function (d) {
-      var colorScale = z[d.name];
-      delete d.name;
-      var keys = Object.keys(d);
-      var newData = [];
-      var dataObj;
-      for (var i = 0; i < keys.length; i++) {
-        dataObj = {
-          name: keys[i],
-          color: colorScale(keys[i])
-        };
-        newData.push(dataObj);
-      }
-      return newData;
-    })
-    .enter().append("g")
-    .attr("transform", function (d, i) {
-      return "translate(0," + (20 + i * 20) + ")";
-    });
-
-
-  rows.append("rect")
-    .attr("x", legendWidth - 19)
-    .attr("width", 19)
-    .attr("height", 19)
-    .attr("fill", function (d) {
-      return d.color;
-    });
-
-  //Add labels to the legend
-  rows.append("text")
-    .attr("x", legendWidth - 24)
-    .attr("y", 9.5)
-    .attr("dy", "0.32em")
-    .text(function (d) { return d.name; })
-    .call(wrap, textWidth);
-    */
 }
 
 //Function for creating the legend that corresponds to the bar chart 
+//This is the vertical legend
 function createLegend2(data) {
 
   //Data for the legend

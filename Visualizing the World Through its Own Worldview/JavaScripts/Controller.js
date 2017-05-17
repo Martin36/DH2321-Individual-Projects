@@ -2,11 +2,13 @@
 //Popup to show on hover for the barchart
 var tooltip = d3.select("body")
 	.append("div")
+  .attr("class", "barchart-tooltip");
+  /*
 	.style("position", "absolute")
 	.style("z-index", "10")
 	.style("visibility", "hidden")
 	.text("");
-
+*/
 //Function for creating buttons that gives the user the ability to change the "wave" of the data
 function addWaveButtonListners() {
   //Find the buttons and add listeners to them
