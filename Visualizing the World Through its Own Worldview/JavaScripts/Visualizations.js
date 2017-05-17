@@ -6,6 +6,7 @@ var percentFormat = d3.format(".1%");
 var colorScales = [];
 addColors();
 
+var bubbleChartColors = ['#ff5252', '#ffd452', '#52ff52', '#52ffff', '#5252ff', '#ff527d'];
 
 //Function for creating a list with checkboxes of variables where the user can select which ones they want to see
 function createListOfVariables() {
@@ -21,7 +22,7 @@ function createListOfVariables() {
       .html(variablesArray[i]);
 
   }
-  $("#listOfVariables").change(addVariables);
+  $('#listOfVariables').change(addVariables);
   //This function is called when the checkbox is clicked
   function addVariables() {
     //Loop through all the options in the select
@@ -127,3 +128,4 @@ function addColors() {
   colorScales.push(d3.scaleOrdinal().range(['#f7f4f9', '#e7e1ef', '#d4b9da', '#c994c7', '#df65b0', '#e7298a', '#ce1256', '#980043', '#67001f'].reverse()))
   colorScales.push(d3.scaleOrdinal().range(['#ffffe5', '#fff7bc', '#fee391', '#fec44f', '#fe9929', '#ec7014', '#cc4c02', '#993404', '#662506'].reverse()))
 }
+

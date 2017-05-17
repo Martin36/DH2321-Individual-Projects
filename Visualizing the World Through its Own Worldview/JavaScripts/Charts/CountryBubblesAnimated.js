@@ -7,7 +7,19 @@ var pack = d3.pack()
   .size([widthBubbles * (2 / 3), heightBubbles - 50])
   .padding(1);
 
+var continents = [
+  "Africa",
+  "Asia",
+  "Europe",
+  "North America",
+  "Oceania",
+  "South America"
+];
+
 var bubbleColor = "#299cd1";
+var bubbleChartColors = ['#ff5252', '#ffd452', '#52ff52', '#52ffff', '#5252ff', '#ff527d'];
+var colors = d3.scaleOrdinal(bubbleChartColors);
+colors.domain(continents);
 var selectedColor = "#D6632E";
 
 // @v4 strength to apply to the position forces
@@ -79,7 +91,9 @@ function updateCountryBubbles() {
       .classed("bubble", true)
       .attr("country", function (d) { return d.data.country; })
       .attr("r", 0)
-      .style("fill", bubbleColor)
+      .style("fill", function (d) {
+        return colors(d.data.continent);
+      })
       .attr('stroke', d3.rgb(bubbleColor).darker())
       .on("click", function (d) {
         //Find index of the element
@@ -203,6 +217,9 @@ function updateCountryBubbles() {
                   '</span><br/>' +
                   '<span class="name">Wave: </span><span class="value">' +
                   selectedWave +
+                  '</span><br/>' +
+                  '<span class="name">Continent: </span><span class="value">' +
+                  d.data.continent +
                   '</span>';
     tooltip.showTooltip(content, d3.event);
   }
