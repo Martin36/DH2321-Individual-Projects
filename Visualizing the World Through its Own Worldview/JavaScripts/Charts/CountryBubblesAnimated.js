@@ -17,7 +17,7 @@ var continents = [
 ];
 
 //var bubbleColor = "#299cd1";
-var bubbleChartColors = ['#52ffff', '#ff5252','#52ff52', '#ffd452',  '#5252ff', '#ff527d'];
+var bubbleChartColors = ['#4dffff', '#ff4d4d','#4dff4d', '#ffff4d',  '#4d4dff', '#d24dff'];
 var colors = d3.scaleOrdinal(bubbleChartColors);
 colors.domain(continents);
 var selectedColor = "#D6632E";
