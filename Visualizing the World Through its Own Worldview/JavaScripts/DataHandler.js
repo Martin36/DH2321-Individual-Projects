@@ -300,6 +300,7 @@ function createDropdownItems() {
     selectedWave = dropdown.val();
     $("#waveMapping").html(selectedWave);
     dataArray = dataObj[selectedWave - 3];
+    $("#barchart-button").attr("disabled", true);
     updateCountryBubbles();
   })
   //Update the selectpicker
