@@ -9,16 +9,13 @@ function createBarChart() {
   //The data that is to be used
   data = dataArray;
   //Filter countries
-  for (var i in data) {
-    data = filterCountries(data);
-  }
+  data = filterCountries(data);
   //Set up the SVG element and append a group
   var svg = d3.select("svg#stackedBarChart"),
       margin = { top: 20, right: 60, bottom: 30, left: 40 },
       width = +svg.attr("width") - margin.left - margin.right,
       height = +svg.attr("height") - margin.top - margin.bottom,
       g = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
   //Create the scaling for the x-axis (this is the scaleBand for the groupes (the outer one))
   var x0 = d3.scaleBand()
     .rangeRound([0, width])
@@ -30,7 +27,6 @@ function createBarChart() {
   //Create the scaling for the y-axis
   var y = d3.scaleLinear()
     .rangeRound([height, 0]);
-
   //Sort the selectedVariables accoring to the variablesArray
   selectedVariables.sort(function (a, b) {
     return (variablesArray.indexOf(a) < variablesArray.indexOf(b)) ? -1 : 1;
@@ -42,15 +38,14 @@ function createBarChart() {
       selectedVariables.splice(i, 1);
     }
   }
-
   //Create the color scale
-  z = [];
+  z = [];   //Array for storing the color scales
   for (var i = 0; i < selectedVariables.length; i++) {
     var variableRemoved = false;
     var counter = 0;
     var dataObj = data[counter];
+    //Give the current variable the correct color scale
     z[selectedVariables[i]] = colorScales[variablesArray.indexOf(selectedVariables[i])];
-
     //This needs to be done if the first object in the data array does not have the
     //selected variable. Check when counter is equal to data.length then none of the
     //selected countries has the selected variable
@@ -124,9 +119,9 @@ function createBarChart() {
     })
     .enter().append("rect")
       .attr("x", 0)
-      .attr("y", function (d) { return y(d[0][1]); })
+      .attr("y", height)
       .attr("width", x1.bandwidth())
-      .attr("height", function (d) { return y(d[0][0]) - y(d[0][1]); })
+      .attr("height", 0)
       .attr("fill", function (d) { return d.color; })
      	.on("mouseover", function (d) {
      	  //Calculate the part of space that this rectangle takes 
@@ -136,7 +131,11 @@ function createBarChart() {
      	  return tooltip.style("visibility", "visible");
      	})
 	    .on("mousemove", function () { return tooltip.style("top", (d3.event.pageY - 10) + "px").style("left", (d3.event.pageX + 10) + "px"); })
-	    .on("mouseout", function () { return tooltip.style("visibility", "hidden"); });
+	    .on("mouseout", function () { return tooltip.style("visibility", "hidden"); })
+        .transition()
+        .duration(600)
+        .attr("y", function (d) { return y(d[0][1]); })
+        .attr("height", function (d) { return y(d[0][0]) - y(d[0][1]); })
 
   //Create the x-axis
   g.append("g")
@@ -156,7 +155,7 @@ function createBarChart() {
     $(".waveContainer").toggle();
   }
 }
-
+//Create a legend using the d3-legend package
 function createLegend(data) {
   //Data for the legend
   var legendData = [];
