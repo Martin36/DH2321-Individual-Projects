@@ -28,8 +28,10 @@
 }
 #header-bar{
   display: inline-flex;
+  position: fixed;
+  top: 0;
   width: 100%;
-  min-height: 100px;
+  min-height: 165px;
   background-color: #196386;
   color: white;
   padding: 20px;
@@ -93,6 +95,7 @@ p{
 }
 .wrapper {
   overflow: hidden; /* will contain if #first is longer than #second */
+  margin-top: 200px;
 }
 /* Columns */
 .first {
