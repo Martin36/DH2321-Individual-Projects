@@ -201,8 +201,13 @@ function createLegend(data) {
     })
     .each(function (d, i) {
       //console.log(d);
+      //How many entries in the legend
+      var nrOfValues = d.keys.length;
+      var widthOfEntry = legendWidth/nrOfValues;
       legend
         .title(d.name)
+        .shapeWidth(widthOfEntry - 20)
+        .labelWrap(widthOfEntry - 15)
         .scale(d3.scaleOrdinal()
           .range(d.colors)
           .domain(d.keys));

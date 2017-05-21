@@ -144,9 +144,11 @@ function updateCountryBubbles() {
           //Add the selected country to an array
           selectedCountries.push(d.data.country);
           //Change color to selected
+          /*
           d3.select(this)
             .style("fill", selectedColor)
             .attr("stroke", d3.rgb(selectedColor).darker());
+          */
           //Enable the create bar chart button if a variable is selected
           if (selectedVariables.length != 0) {
             $('#createBarchartButton input[name="barchartButton"]')
@@ -214,7 +216,8 @@ function updateCountryBubbles() {
           var bubbleColor = colors(d.data.continent);
           return d3.rgb(bubbleColor).darker();
         }else{
-          return d3.rgb(selectedColor).darker();
+          var bubbleColor = colors(d.data.continent);
+          return d3.rgb(bubbleColor).darker();
         }
       });
 
