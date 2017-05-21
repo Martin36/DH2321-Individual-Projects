@@ -28,6 +28,7 @@ function createBarChart() {
   data = dataArray;
   //Filter countries
   data = filterCountries(data);
+  console.log(data);
   //Sort the selectedVariables accoring to the variablesArray
   selectedVariables.sort(function (a, b) {
     return (variablesArray.indexOf(a) < variablesArray.indexOf(b)) ? -1 : 1;
@@ -199,6 +200,7 @@ function createLegend(data) {
       return "translate(20," + (20 + 100*i) + ")";
     })
     .each(function (d, i) {
+      //console.log(d);
       //How many entries in the legend
       var nrOfValues = d.keys.length;
       var widthOfEntry = legendWidth/nrOfValues;
