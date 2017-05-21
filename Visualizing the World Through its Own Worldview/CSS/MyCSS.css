@@ -56,6 +56,13 @@ img.resize{
 p{
   font-size:20px;
 }
+.stackedBar {
+  opacity: 0.8;
+  transition: opacity 0.5s ease;
+}
+.stackedBar:hover{
+  opacity: 1;
+}
 .svgText{
   pointer-events:none
 }
@@ -96,19 +103,6 @@ p{
 .wrapper {
   overflow: hidden; /* will contain if #first is longer than #second */
   margin-top: 200px;
-}
-/* Columns */
-.first {
-    width: 30%;
-    float:left; /* add this */
-}
-.second {
-    width: 25%;
-    float: left;
-    overflow: hidden; /* if you don't want #second to wrap below #first */
-}
-.third {
-    overflow: hidden;
 }
 
 /* Custom fonts */
