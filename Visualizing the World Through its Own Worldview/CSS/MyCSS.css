@@ -1,38 +1,113 @@
 ﻿body {
+  background-color: lightgray;
+  margin: 0;
 }
-
-p{
-  font-size:20px;
+#barchart-container{
+  display: flex;
+  flex-direction: column;
+  margin-top: 120px;
 }
-
-#listOfVariables {
-  margin-left: 20px;
+.barchart-tooltip{
+  position: absolute;
+  z-index: 10;
+  visibility: hidden;
+  background-color: white;
+  border: 1px black;
+  border-radius: 5px;
+  box-shadow: 2px 2px 15px #000;
+  padding: 3px;
 }
-
 #createBarchartButton{
   margin-left: 20px;
+  margin-top: 20px;
 }
-
-.waveButton{
-  margin-left: 20px;
-  margin-right: 10px;
-}
-
-.waveContainer{
-  margin-bottom: 50px;
-}
-
-.svgText{
-  pointer-events:none
-}
-
 .header{
   margin-left: 20px;
   align-items:center;
   width: 40%;
 }
+#header-bar{
+  display: inline-flex;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  min-height: 165px;
+  background-color: rgba(25, 99, 134, 0.85);
+  color: white;
+  padding: 20px;
+  font-family: berkshire;
+  box-shadow: 0 0 10px 2px #000;
+}
+#header-bar > div{
+  margin-left: 20px;
+}
+#header-bar select{
+  color: #333;
+}
 
 img.resize{
   width : 110%;
   height:auto;
+}
+#legend-container{
+  overflow-y: auto;
+  height: 400px;
+}
+p{
+  font-size:20px;
+}
+.stackedBar {
+  opacity: 0.8;
+  transition: opacity 0.5s ease;
+}
+.stackedBar:hover{
+  opacity: 1;
+}
+.svgText{
+  pointer-events:none
+}
+.tooltip {
+  position: absolute;
+  top: 100px;
+  left: 100px;
+  -moz-border-radius:5px;
+  border-radius: 5px;
+  border: 2px solid #000;
+  background: #fff;
+  opacity: .9;
+  color: black;
+  padding: 10px;
+  width: 300px;
+  font-size: 12px;
+  z-index: 10;
+}
+.tooltip .name {
+  font-weight:bold;
+}
+.tooltip .title {
+  font-size: 13px;
+}
+
+#visualization-container{
+  display: inline-flex;
+  justify-content: space-around;
+  width: 100%;
+}
+.waveButton{
+  margin-left: 20px;
+  margin-right: 10px;
+}
+.waveContainer{
+  margin-bottom: 50px;
+}
+.wrapper {
+  overflow: hidden; /* will contain if #first is longer than #second */
+  margin-top: 200px;
+}
+
+/* Custom fonts */
+
+@font-face {
+  font-family: berkshire;
+  src: url("../Fonts/berkshireswash-regular.ttf");
 }
