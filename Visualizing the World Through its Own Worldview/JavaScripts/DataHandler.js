@@ -146,7 +146,6 @@ function loadData() {
     .defer(d3.csv, "Data/Being_very_successful_Wave6.csv")
     .defer(d3.csv, "Data/State_of_health_subjective_Wave6.csv")
     .await(fixData);
-      
 
 }
 

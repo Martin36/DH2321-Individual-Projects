@@ -35,25 +35,40 @@ var chart = d3.select("svg#countriesGrouped")
 
 var bubbles;
 
+//Filter the contries so that only the countries that have data in the selected wave gets shown in the bubble chart
+function filterByWave(countryObjects) {
+  var countriesInSelectedWave = dataArray;
+  var newData = [];
+  for(var i = 0; i < countryObjects.length; i++){
+    //For each country traverse all the countries in the current selected wave and check if it is there
+    for(var j = 0; j < countriesInSelectedWave.length; j++){
+      //Check if both datasets contains this country
+      if(countryObjects[i].country == countriesInSelectedWave[j].country){
+        newData.push(countryObjects[i]);
+      }
+    }
+  }
+  return newData;
+}
+
 //https://github.com/vlandham/bubble_chart_v4
 //Function for creating animated country bubbles (using force layout)
 function updateCountryBubbles() {
   //Create the tooltip object
   var tooltip = floatingTooltip('countries_tooltip', 240);
   selectedCountries = [];
-
   //Disable the create barchart button
   d3.select("#createBarchartButton")
     .attr("disabled", true);
-
-  //Filter the countries that exist in the current wave
+  //Filter the countries that exist in both data sets
   var filteredCountryObjects = [];
   for (var i = 0; i < countryObjects.length; i++) {
     if (countries.indexOf(countryObjects[i].country) > -1) {
       filteredCountryObjects.push(countryObjects[i]);
     }
   }
-
+  //Remove all the countries that are not in the selected wave
+  filteredCountryObjects = filterByWave(filteredCountryObjects);
   //Create the root node (needed for the pack function)
   var root = d3.hierarchy({ children: filteredCountryObjects })
     .sum(function (d) {
@@ -87,7 +102,7 @@ function updateCountryBubbles() {
   //EXIT
   bubbles.exit()
     .transition(t)
-      .attr("r", function (d) { return d.r; })
+      .attr("r", 0)
       .remove();
 
   //ENTER

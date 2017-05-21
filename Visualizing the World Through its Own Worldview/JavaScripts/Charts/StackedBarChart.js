@@ -6,16 +6,12 @@ var textWidth = 100;
 function createBarChart() {
   //Clear the SVG if there already exists a var chart
   $("svg#stackedBarChart").empty();
-  //The data that is to be used
-  data = dataArray;
-  //Filter countries
-  data = filterCountries(data);
   //Set up the SVG element and append a group
   var svg = d3.select("svg#stackedBarChart"),
-      margin = { top: 20, right: 60, bottom: 30, left: 40 },
-      width = +svg.attr("width") - margin.left - margin.right,
-      height = +svg.attr("height") - margin.top - margin.bottom,
-      g = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+    margin = { top: 20, right: 60, bottom: 30, left: 40 },
+    width = +svg.attr("width") - margin.left - margin.right,
+    height = +svg.attr("height") - margin.top - margin.bottom,
+    g = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
   //Create the scaling for the x-axis (this is the scaleBand for the groupes (the outer one))
   var x0 = d3.scaleBand()
     .rangeRound([0, width])
@@ -27,6 +23,12 @@ function createBarChart() {
   //Create the scaling for the y-axis
   var y = d3.scaleLinear()
     .rangeRound([height, 0]);
+
+  //The data that is to be used
+  data = dataArray;
+  //Filter countries
+  data = filterCountries(data);
+  console.log(data);
   //Sort the selectedVariables accoring to the variablesArray
   selectedVariables.sort(function (a, b) {
     return (variablesArray.indexOf(a) < variablesArray.indexOf(b)) ? -1 : 1;

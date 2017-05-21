@@ -60,7 +60,7 @@ function createListOfVariables() {
     .attr("disabled", true)
     .attr("class", "btn btn-info")
     .on("click", function () {
-      createBarChart(dataArray);
+      createBarChart();
     })
 }
 //Function for creating a list with checkboxes of variables where the user can select which ones they want to see
